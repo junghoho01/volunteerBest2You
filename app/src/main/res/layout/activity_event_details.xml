@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EventDetailsActivity"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/img_arrowBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/ic_baseline_arrow_back_ios_new_24"
+        android:layout_margin="10dp"/>
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_toRightOf="@id/img_arrowBack"
+        android:text="Event - All For Love"
+        android:textColor="#098B9A"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tv_title">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/frame_img"
+                android:layout_below="@id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:padding="10dp">
+
+                <!-- Actual content goes here -->
+                <ImageView
+                    android:id="@+id/img_event"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/logo"
+                    android:background="@drawable/circular_background"
+                    android:clipToOutline="true"/>
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tv_eventTitle"
+                android:layout_below="@id/frame_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All For Love"
+                android:textColor="#064D5A"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="18dp"
+                android:layout_marginTop="25dp"
+                android:paddingLeft="15dp"/>
+
+            <TextView
+                android:id="@+id/tv_eventDesc"
+                android:layout_below="@id/tv_eventTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lorem"
+                android:textSize="16dp"
+                android:paddingTop="10dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"/>
+
+            <TextView
+                android:id="@+id/tv_positionTitle"
+                android:layout_below="@id/tv_eventDesc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Position needed"
+                android:textColor="#098B9A"
+                android:gravity="center"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:paddingTop="10dp"
+                android:paddingLeft="15dp"/>
+
+            <TextView
+                android:id="@+id/tv_positionDetails"
+                android:layout_below="@id/tv_positionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="● Photographer \n● Store Keeper \n● Human Resource"
+                android:paddingTop="10dp"
+                android:textSize="16dp"
+                android:paddingLeft="15dp"/>
+
+            <TextView
+                android:id="@+id/tv_addressTitle"
+                android:layout_below="@id/tv_positionDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Address"
+                android:textColor="#098B9A"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:paddingTop="10dp"
+                android:textSize="16dp"
+                android:paddingLeft="15dp"/>
+
+            <TextView
+                android:id="@+id/tv_addressDetails"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_addressTitle"
+                android:layout_marginTop="0dp"
+                android:paddingLeft="15dp"
+                android:paddingTop="10dp"
+                android:text="8, Jalan Batu Ferringhi, 11100 Batu Ferringhi, Pulau Pinang"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/tv_dateTitle"
+                android:layout_below="@id/tv_addressDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date"
+                android:textColor="#098B9A"
+                android:textSize="16dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:paddingTop="10dp"
+                android:paddingLeft="15dp"/>
+
+            <TextView
+                android:id="@+id/tv_dateDetails"
+                android:layout_below="@id/tv_dateTitle"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="2 December 2022"
+                android:paddingTop="10dp"
+                android:textSize="16dp"
+                android:paddingLeft="15dp"/>
+
+            <TextView
+                android:id="@+id/tv_timeTitle"
+                android:layout_below="@id/tv_dateDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Time"
+                android:textColor="#098B9A"
+                android:gravity="center"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:paddingTop="10dp"
+                android:paddingLeft="15dp"/>
+
+            <TextView
+                android:id="@+id/tv_timeDetails"
+                android:layout_below="@id/tv_timeTitle"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="7:00 AM"
+                android:textSize="16dp"
+                android:paddingTop="10dp"
+                android:paddingLeft="15dp"/>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

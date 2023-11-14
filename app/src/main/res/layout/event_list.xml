@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="150dp"
+    android:layout_height="200dp"
+    app:cardElevation="8dp"
+    app:cardCornerRadius="8dp"
+    android:layout_margin="16dp"
+    android:backgroundTint="#098B9A">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <FrameLayout
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:padding="10dp">
+
+            <!-- Circular background -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/circular_background" />
+
+            <!-- Actual content goes here -->
+            <ImageView
+                android:id="@+id/img_event"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                android:src="@drawable/logo"
+                android:background="@drawable/circular_background"
+                android:clipToOutline="true"/>
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tv_eventTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="All For Love"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:paddingBottom="10dp"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

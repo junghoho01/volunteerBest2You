@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomeActivity"
+    android:layout_margin="10dp">
+
+    <ImageView
+        android:id="@+id/img_logo"
+        android:layout_width="230dp"
+        android:layout_height="230dp"
+        android:src="@drawable/logo"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/tv_event"
+        android:layout_below="@id/img_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Top 10 Event"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:textSize="17sp"/>
+
+    <!-- Add a horizontal line below the TextView -->
+    <View
+        android:id="@+id/v_line"
+        android:layout_below="@id/tv_event"
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:background="#00BBC4" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/eventRecyclerView"
+        android:layout_below="@id/v_line"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        tools:listitem="@layout/event_list"/>
+
+    <TextView
+        android:id="@+id/tv_more"
+        android:layout_below="@id/eventRecyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/viewmore"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="10dp"
+        android:textSize="15sp"
+        android:textColor="#064D5A"
+        android:textStyle="bold"/>
+
+</RelativeLayout>
