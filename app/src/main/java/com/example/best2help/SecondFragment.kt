@@ -93,7 +93,7 @@ class SecondFragment : Fragment() {
                         // To add data to Realtime Firebase
 
 //                        dbrefUser = FirebaseDatabase.getInstance().getReference("Volunteer")
-//                        val uid = generateUid()
+                        val uid = generateUid()
 //                        val reference = dbrefUser.child(uid)
 //                        val userData = mapOf(
 //                            "address" to etaddress.text.toString(),
@@ -109,12 +109,12 @@ class SecondFragment : Fragment() {
 
                         var intent = Intent(context, ConfirmRegisterActivity::class.java)
                         intent.putExtra("EMAIL_KEY", etEmail.text.toString())
-                        intent.putExtra("ADDRESS_KEY", etEmail.text.toString())
-                        intent.putExtra("CONTACT_KEY", etEmail.text.toString())
-                        intent.putExtra("PASS_KEY", etEmail.text.toString())
-                        intent.putExtra("UID_KEY", etEmail.text.toString())
-                        intent.putExtra("USERNAME_KEY", etEmail.text.toString())
-                        intent.putExtra("SKILLS_KEY", etEmail.text.toString())
+                        intent.putExtra("ADDRESS_KEY", etaddress.text.toString())
+                        intent.putExtra("CONTACT_KEY", etContact.text.toString())
+                        intent.putExtra("PASS_KEY", etPass.text.toString())
+                        intent.putExtra("UID_KEY", uid)
+                        intent.putExtra("USERNAME_KEY", etUsername.text.toString())
+                        intent.putExtra("SKILLS_KEY", textViewSkillset.text.toString())
                         startActivity(intent)
 
                     } else {
