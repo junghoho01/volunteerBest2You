@@ -1,12 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SecondFragment">
+    tools:context=".ProfileActivity">
+
+    <ImageView
+        android:id="@+id/img_arrowBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:paddingLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/ic_baseline_arrow_back_ios_new_24" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_toRightOf="@id/img_arrowBack"
+        android:text="Profile"
+        android:textColor="#098B9A"
+        android:textSize="20dp"
+        android:textStyle="bold" />
 
     <ScrollView
+        android:layout_below="@id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -61,54 +90,8 @@
                 android:layout_marginRight="40dp"/>
 
             <TextView
-                android:id="@+id/tv_password"
-                android:layout_below="@id/et_email"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Password"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"
-                android:layout_marginTop="20dp"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/et_password"
-                android:layout_below="@id/tv_password"
-                android:layout_width="300dp"
-                android:layout_height="48dp"
-                android:ems="10"
-                android:inputType="textPassword"
-                android:hint="**************"
-                android:layout_marginLeft="36dp"
-                android:layout_marginRight="40dp"/>
-
-            <TextView
-                android:id="@+id/tv_cpassword"
-                android:layout_below="@id/et_password"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Confirm Password"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"
-                android:layout_marginTop="20dp"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/et_cpassword"
-                android:layout_below="@id/tv_cpassword"
-                android:layout_width="300dp"
-                android:layout_height="48dp"
-                android:ems="10"
-                android:inputType="textPassword"
-                android:hint="**************"
-                android:layout_marginLeft="36dp"
-                android:layout_marginRight="40dp"/>
-
-            <TextView
                 android:id="@+id/tv_contactNumber"
-                android:layout_below="@id/et_password"
+                android:layout_below="@id/et_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Contact Number"
@@ -180,11 +163,11 @@
                 android:padding="12dp" />
 
             <Button
-                android:id="@+id/btn_signup"
+                android:id="@+id/btn_save"
                 android:layout_below="@id/dropdown_skillset"
                 android:layout_width="310dp"
                 android:layout_height="wrap_content"
-                android:text="Sign-up"
+                android:text="Save"
                 android:layout_marginTop="30dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginLeft="40dp"

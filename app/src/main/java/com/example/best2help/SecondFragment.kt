@@ -7,9 +7,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import com.example.best2help.databinding.ActivityMainBinding
 import com.google.firebase.database.*
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.UUID
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -28,12 +35,23 @@ class SecondFragment : Fragment() {
     private var param2: String? = null
 
     // Initialize variables for dropdown
-    private lateinit var textView: TextView
+    private lateinit var textViewSkillset: TextView
     private var selectedSkillSet = BooleanArray(0)
     private val skillList = ArrayList<Int>()
     private var skillArray = emptyArray<String>()
-    private lateinit var dbref : DatabaseReference
 
+    // Intialize variable for database
+    private lateinit var dbref : DatabaseReference
+    private lateinit var dbrefUser : DatabaseReference
+
+    // Initiazlie inputs
+    private lateinit var registerBtn: Button
+    private lateinit var etUsername: EditText
+    private lateinit var etEmail: EditText
+    private lateinit var etPass: EditText
+    private lateinit var etCpass: EditText
+    private lateinit var etContact: EditText
+    private lateinit var etaddress: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,10 +59,6 @@ class SecondFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-    }
-
-    interface FetchSkillsCallback {
-        fun onSkillsFetched()
     }
 
     override fun onCreateView(
@@ -55,6 +69,72 @@ class SecondFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_second, container, false)
 
         fetchSkills()
+
+        // Declare all the inputs
+        registerBtn = view!!.findViewById(R.id.btn_signup)
+        etUsername = view!!.findViewById(R.id.et_username)
+        etEmail = view!!.findViewById(R.id.et_email)
+        etPass = view!!.findViewById(R.id.et_password)
+        etCpass = view!!.findViewById(R.id.et_cpassword)
+        etContact = view!!.findViewById(R.id.et_contactNumber)
+        etaddress = view!!.findViewById(R.id.et_addressInfo)
+
+        registerBtn.setOnClickListener {
+
+            // Perform validation
+            if (textViewSkillset.text.isNotEmpty() && etUsername.text.isNotEmpty() && etEmail.text.isNotEmpty()
+                && etPass.text.isNotEmpty() && etCpass.text.isNotEmpty() && etContact.text.isNotEmpty()
+                && etaddress.text.isNotEmpty()) {
+
+                if (isEmailValid(etEmail.text.toString())){
+
+                    if (etPass.text.toString() == etCpass.text.toString()){
+
+                        // To add data to Realtime Firebase
+
+//                        dbrefUser = FirebaseDatabase.getInstance().getReference("Volunteer")
+//                        val uid = generateUid()
+//                        val reference = dbrefUser.child(uid)
+//                        val userData = mapOf(
+//                            "address" to etaddress.text.toString(),
+//                            "contact" to etContact.text.toString(),
+//                            "email" to etEmail.text.toString(),
+//                            "password" to etPass.text.toString(),
+//                            "uid" to uid,
+//                            "username" to etUsername.text.toString(),
+//                            "skills" to textViewSkillset.text.toString(),
+//                            "declineEvent" to "",
+//                        )
+//                        reference.setValue(userData)
+
+                        var intent = Intent(context, ConfirmRegisterActivity::class.java)
+                        intent.putExtra("EMAIL_KEY", etEmail.text.toString())
+                        intent.putExtra("ADDRESS_KEY", etEmail.text.toString())
+                        intent.putExtra("CONTACT_KEY", etEmail.text.toString())
+                        intent.putExtra("PASS_KEY", etEmail.text.toString())
+                        intent.putExtra("UID_KEY", etEmail.text.toString())
+                        intent.putExtra("USERNAME_KEY", etEmail.text.toString())
+                        intent.putExtra("SKILLS_KEY", etEmail.text.toString())
+                        startActivity(intent)
+
+                    } else {
+                        DialogUtils.errorDialog(requireContext(), "Oops, password not match!")
+                    }
+
+                } else {
+                    DialogUtils.errorDialog(requireContext(), "Oops, email format is not right!")
+                }
+
+            } else {
+                DialogUtils.errorDialog(requireContext(), "Oops, it's not complete yet!")
+            }
+
+//        DialogUtils.errorDialog(requireContext(), textViewSkillset.text.toString())
+//        DialogUtils.errorDialog(requireContext(), etUsername.text.toString())
+
+        //            var intent = Intent(context, ProfileActivity::class.java)
+        //            startActivity(intent)
+        }
 
         return view
     }
@@ -76,6 +156,8 @@ class SecondFragment : Fragment() {
                         }
 
 //                        Toast.makeText(context, skill!!.skillsetName.toString(), Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(context, generateUid(), Toast.LENGTH_SHORT).show()
+
                     }
                 }
 
@@ -89,10 +171,15 @@ class SecondFragment : Fragment() {
         })
     }
 
+    private fun isEmailValid(email: String): Boolean {
+        val emailRegex = Regex("^\\w+([.-]?\\w+)*@\\w+([.-]?\\w+)*(\\.\\w{2,})+$")
+        return email.matches(emailRegex)
+    }
+
     private fun dropdownFunction() {
-        textView = view!!.findViewById(R.id.dropdown_skillset)
+        textViewSkillset = requireView().findViewById(R.id.dropdown_skillset)
         selectedSkillSet = BooleanArray(skillArray.size)
-        textView.setOnClickListener {
+        textViewSkillset.setOnClickListener {
             val builder = AlertDialog.Builder(requireContext())
             builder.setTitle("Select Skill Set")
             builder.setCancelable(false)
@@ -128,7 +215,7 @@ class SecondFragment : Fragment() {
                     }
                 }
                 // set text on textView
-                textView.text = stringBuilder.toString()
+                textViewSkillset.text = stringBuilder.toString()
 
                 // Check value
                 Toast.makeText(context, stringBuilder.toString(), Toast.LENGTH_SHORT).show()
@@ -146,12 +233,20 @@ class SecondFragment : Fragment() {
                     // clear language list
                     skillList.clear()
                     // clear text view value
-                    textView.text = ""
+                    textViewSkillset.text = ""
                 }
             }
             // show dialog
             builder.show()
         }
+    }
+
+    // Function to generate a UID with timestamp and random component
+    private fun generateUid(): String {
+        val timestamp = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(Date())
+        val randomPart = UUID.randomUUID().toString().substring(0, 8)
+
+        return "$timestamp-$randomPart"
     }
 
     companion object {
