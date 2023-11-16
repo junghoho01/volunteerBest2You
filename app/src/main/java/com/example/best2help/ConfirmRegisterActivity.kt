@@ -1,5 +1,6 @@
 package com.example.best2help
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -74,6 +75,10 @@ class ConfirmRegisterActivity : AppCompatActivity() {
                     "declineEvent" to "",
                 )
                 reference.setValue(userData)
+
+                var intent = Intent(this, HomeActivity::class.java)
+                intent.putExtra("FLAG_KEY", "1") // Set one as first time
+                startActivity(intent)
 
             } else {
                 DialogUtils.errorDialog(this, "Oops, wrong code!")

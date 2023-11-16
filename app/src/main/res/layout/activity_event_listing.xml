@@ -31,7 +31,24 @@
         android:layout_below="@id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_above="@id/linear_btn"
         tools:listitem="@layout/event_cardlist"/>
+
+    <LinearLayout
+        android:id="@+id/linear_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/btn_autoJoinEvent"
+            android:layout_below="@id/eventListRecyclerView"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:text="Auto Join Event"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="1dp"/>
+    </LinearLayout>
 
 </RelativeLayout>

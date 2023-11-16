@@ -25,6 +25,14 @@ class HomeActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Get value
+        val intent = intent
+        val flag = intent.getStringExtra("FLAG_KEY").toString()
+
+        if (flag == "1") {
+            DialogUtils.succsessDialog(this, "Congratulations! You have register successfully!")
+        }
+
         // Recycler View
         eventRecyclerView = findViewById(R.id.eventRecyclerView)
         eventRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)

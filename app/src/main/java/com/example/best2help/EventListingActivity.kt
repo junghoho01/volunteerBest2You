@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,6 +34,97 @@ class EventListingActivity : AppCompatActivity() {
         binding.imgArrowBack.setOnClickListener {
             toHomeActivity()
         }
+
+        binding.btnAutoJoinEvent.setOnClickListener {
+            matchEvent()
+        }
+    }
+
+    private fun matchEvent() {
+//        DialogUtils.matchingDialog(this, "Matching Event...")
+//
+//        // Hold for 2 seconds
+//        Handler().postDelayed({
+//            // Your code to be executed after 2 seconds
+//            // Dismiss the previous dialog if it exists
+//            DialogUtils.dismissDialog(this)
+//        }, 2000) // 2000 milliseconds = 2 seconds
+
+        // Get event with valid eventApproval / eventStatus
+//        DialogUtils.succsessDialog(this, eventArrayList.count().toString())
+
+        // Get Own skillset
+        try {
+            // Get a reference to the Firebase database
+            val dbref = FirebaseDatabase.getInstance().getReference("Volunteer")
+
+            // Use orderByChild to query based on the uid
+            val query = dbref.orderByChild("uid").equalTo("20231116143606-cf5e191f")
+
+            query.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (eventSnapshot in snapshot.children) {
+                            val volunteer = eventSnapshot.getValue(Volunteer::class.java)
+                            splitSkillset(volunteer!!.skills.toString())
+                        }
+                    } else {
+                        // Handle the case where no event with the specified ID is found
+                        // For example, display an error message or navigate back
+                        Log.d(ContentValues.TAG, "No volunteer found with ID")
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Handle onCancelled error
+                    Log.e(ContentValues.TAG, "Firebase Database onCancelled: ${error.message}")
+                }
+            })
+        } catch (e: Exception) {
+            // Handle other exceptions
+            Log.e(ContentValues.TAG, "Error fetching volunteer details: ${e.message}", e)
+        }
+    }
+
+    private fun splitSkillset(skills: String) {
+
+        // User skill in list
+        val userSkillList = skills.split(", ");
+
+        // Count total valid event
+        var count = eventArrayList.count()
+
+
+        // Initialize variable
+        var bestMatchEvent: Event? = null
+        var maxMatchingSkills = 0
+
+        // Run the matching
+        for (i in 0 until count){
+            val eventSkill = eventArrayList[i].skillSet
+
+            // Split the eventSkill string into a list of strings and trim each skill
+            val eventSkillList = eventSkill!!.split(",").map { it.trim() }
+
+            // Convert both lists to sets for finding intersection
+            val userSkillSet = userSkillList.toSet()
+            val eventSkillSet = eventSkillList.toSet()
+
+            DialogUtils.succsessDialog(this, userSkillSet.toString() + eventSkillSet.toString())
+
+            val matchingSkills = userSkillSet.intersect(eventSkillSet).count()
+
+            // Check if the current event has more matching skills than the previous best match
+            if (matchingSkills > maxMatchingSkills) {
+                // Update the best match event
+                bestMatchEvent = eventArrayList[i]
+                maxMatchingSkills = matchingSkills
+            }
+
+        }
+
+        DialogUtils.succsessDialog(this, "Best Match Event: ${bestMatchEvent?.eventId.toString()}")
+
     }
 
     private fun toHomeActivity() {
@@ -62,8 +154,6 @@ class EventListingActivity : AppCompatActivity() {
 
                         // For listener
                         var adapter = EventListAdapter(eventArrayList)
-
-                        // Show only the top 10 events
                         eventRecyclerView.adapter = adapter
                         adapter.setOnItemClickListener(object : EventListAdapter.onItemClickListener{
                             override fun onItemClick(position: Int) {

@@ -56,4 +56,31 @@ object DialogUtils {
         dialog.show()
     }
 
+    fun matchingDialog(context: Context, title: String) {
+
+        //Dismiss the previous dialog if it exists
+        previousDialog?.dismiss()
+
+        val dialog = Dialog(context)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setContentView(R.layout.custom_matching)
+        val text = dialog.findViewById<TextView>(R.id.tv_title)
+        text.text = title
+        val btnClose = dialog.findViewById<Button>(R.id.btnDeniedClose)
+        btnClose.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        // Set the current dialog as the previous dialog
+        previousDialog = dialog
+
+        dialog.show()
+    }
+
+    fun dismissDialog(context: Context) {
+        //Dismiss the previous dialog if it exists
+        previousDialog?.dismiss()
+    }
+
 }

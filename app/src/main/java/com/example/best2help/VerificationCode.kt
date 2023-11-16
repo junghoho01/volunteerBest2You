@@ -39,86 +39,88 @@ class VerificationCode
             mimeMessage.subject = "Account Verification"
 
             val emailContent = """
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Verification</title>
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-        }
-
-        .container {
-            background-color: #ffffff;
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 1s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        h1 {
-            color: #3498db;
-        }
-
-        p {
-            color: #555555;
-            line-height: 1.6;
-        }
-
-        .verification-code {
-            background-color: #3498db;
-            color: #ffffff;
-            font-size: 32px;
-            padding: 15px 30px;
-            border-radius: 4px;
-            margin: 20px 0;
-            letter-spacing: 2px;
-        }
-
-        .footer {
-            margin-top: 20px;
-            color: #888888;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="container">
-        <h1>Email Verification</h1>
-        <p style="color: #666;">Dear $receiverEmail,</p>
-        <p style="color: #777;">Thank you for choosing our service. To complete your registration, please use the following verification code:</p>
-        <div class="verification-code">
-            <strong>$verificationCode</strong>
-        </div>
-        <p style="color: #777;">If you did not request this verification, please ignore this email.</p>
-        <p style="color: #555;">Best regards,<br>Best2Help</p>
-        <div class="footer">
-            <p style="color: #888;">This is an automated message. Please do not reply.</p>
-        </div>
-    </div>
-</body>
-
-</html>
-
+                <!DOCTYPE html>
+                <html lang="en">
+                
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Email Verification</title>
+                    <style>
+                        .container {
+                            background-color: #ffffff;
+                            max-width: 600px;
+                            margin: 20px auto;
+                            padding: 20px;
+                            border-radius: 8px;
+                            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                            animation: fadeIn 1s ease-in-out;
+                        }
+                
+                        @keyframes fadeIn {
+                            from {
+                                opacity: 0;
+                            }
+                
+                            to {
+                                opacity: 1;
+                            }
+                        }
+                
+                        h1 {
+                            color: #3498db;
+                        }
+                
+                        p {
+                            color: #555555;
+                            line-height: 1.6;
+                        }
+                
+                        .verification-code {
+                            background-color: #3498db;
+                            color: #ffffff;
+                            font-size: 32px;
+                            padding: 15px 30px;
+                            border-radius: 4px;
+                            margin: 20px 0;
+                            letter-spacing: 2px;
+                        }
+                
+                        .footer {
+                            margin-top: 20px;
+                            color: #888888;
+                        }
+                    </style>
+                </head>
+                
+                <body style="background-color: #00BBC4;                             
+                            font-family: 'Helvetica Neue', Arial, sans-serif;
+                            margin: 0;
+                            padding: 0;
+                            text-align: center;">
+                    <div class="container" style=" 
+                        background-color: #ffffff;
+                        max-width: 600px;
+                        margin: 20px auto;
+                        padding: 20px;
+                        border-radius: 8px;
+                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                        animation: fadeIn 1s ease-in-out;">
+                        <h1>Email Verification</h1>
+                        <p style="color: #666;">Dear $receiverEmail,</p>
+                        <p style="color: #777;">Thank you for choosing our service. To complete your registration, please use the following verification code:</p>
+                        <div class="verification-code">
+                            <strong>$verificationCode</strong>
+                        </div>
+                        <p style="color: #777;">If you did not request this verification, please ignore this email.</p>
+                        <p style="color: #555;">Best regards,<br>Best2Help</p>
+                        <div class="footer">
+                            <p style="color: #888;">This is an automated message. Please do not reply.</p>
+                        </div>
+                    </div>
+                </body>
+                
+                </html>
             """.trimIndent()
 
 
