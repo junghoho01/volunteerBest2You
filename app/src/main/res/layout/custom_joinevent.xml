@@ -13,6 +13,7 @@
         app:cardUseCompatPadding="true">
 
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -22,10 +23,10 @@
             <com.airbnb.lottie.LottieAnimationView
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                app:lottie_rawRes="@raw/matching"
+                app:lottie_rawRes="@raw/checked"
                 app:lottie_autoPlay="true"
                 app:lottie_loop="true"
-                app:lottie_speed="1"/>
+                app:lottie_speed="0.8"/>
 
             <TextView
                 android:id="@+id/tv_title"
@@ -36,12 +37,33 @@
                 android:padding="10dp"
                 android:textColor="@color/black"/>
 
-<!--            <Button-->
-<!--                android:id="@+id/btnDeniedClose"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Okay"-->
-<!--                android:backgroundTint="@color/themecolor"/>-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_margin="10dp">
+
+                <Button
+                    android:id="@+id/btnDeny"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Decline"
+                    android:layout_weight="1"
+                    android:layout_marginRight="7dp"
+                    android:padding="10dp"
+                    android:backgroundTint="#808080"/>
+
+                <Button
+                    android:id="@+id/btnAccept"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="7dp"
+                    android:text="Accept"
+                    android:padding="10dp"
+                    android:backgroundTint="@color/themecolor"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

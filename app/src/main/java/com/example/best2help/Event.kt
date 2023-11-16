@@ -11,4 +11,6 @@ data class Event(
     val eventStartDate: String? = null,
     val eventStartTime: String? = null,
     val eventStatus: String? = null,
+    val eventType: String? = null,
+    val tryNia: String? = null, // This is organizer
 )

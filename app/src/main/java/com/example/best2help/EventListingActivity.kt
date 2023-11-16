@@ -36,12 +36,20 @@ class EventListingActivity : AppCompatActivity() {
         }
 
         binding.btnAutoJoinEvent.setOnClickListener {
-            matchEvent()
+            DialogUtils.matchingDialog(this, "Matching Event...")
+
+            // Hold for 4 seconds
+            Handler().postDelayed({
+                // Your code to be executed after 2 seconds
+                // Dismiss the previous dialog if it exists
+                DialogUtils.dismissDialog(this)
+                matchEvent()
+
+            }, 4000)
         }
     }
 
     private fun matchEvent() {
-//        DialogUtils.matchingDialog(this, "Matching Event...")
 //
 //        // Hold for 2 seconds
 //        Handler().postDelayed({
@@ -110,7 +118,7 @@ class EventListingActivity : AppCompatActivity() {
             val userSkillSet = userSkillList.toSet()
             val eventSkillSet = eventSkillList.toSet()
 
-            DialogUtils.succsessDialog(this, userSkillSet.toString() + eventSkillSet.toString())
+            //DialogUtils.succsessDialog(this, userSkillSet.toString() + eventSkillSet.toString())
 
             val matchingSkills = userSkillSet.intersect(eventSkillSet).count()
 
@@ -123,7 +131,11 @@ class EventListingActivity : AppCompatActivity() {
 
         }
 
-        DialogUtils.succsessDialog(this, "Best Match Event: ${bestMatchEvent?.eventId.toString()}")
+        if (bestMatchEvent != null){
+            DialogUtils.joinEventDialog(this, "Best Match Event: ${bestMatchEvent?.eventName.toString()}", "20231116143606-cf5e191f", bestMatchEvent)
+        } else {
+            DialogUtils.errorDialog(this, "Oops, no event matched you..")
+        }
 
     }
 
