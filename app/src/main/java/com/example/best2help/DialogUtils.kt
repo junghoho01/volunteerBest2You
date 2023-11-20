@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.renderscript.Sampler.Value
+import android.util.Log
 import android.view.Window
 import android.widget.Button
 import android.widget.TextView
@@ -17,7 +18,6 @@ import com.google.firebase.database.ValueEventListener
 object DialogUtils {
 
     private var previousDialog: Dialog? = null
-    private lateinit var dbref: DatabaseReference
 
     fun errorDialog(context: Context, title: String) {
 
@@ -170,5 +170,31 @@ object DialogUtils {
             }
         })
     }
+
+    fun getDetails(email: String, callback: (Volunteer?) -> Unit) {
+        val dbrefUser = FirebaseDatabase.getInstance().getReference("Volunteer")
+
+        val query = dbrefUser.orderByChild("email").equalTo(email)
+
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // Assuming there's only one user with the provided email
+                    for (userSnapshot in dataSnapshot.children) {
+                        val user = userSnapshot.getValue(Volunteer::class.java)
+                        callback.invoke(user)
+                        return
+                    }
+                }
+                callback.invoke(null)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle errors
+                callback.invoke(null)
+            }
+        })
+    }
+
 
 }

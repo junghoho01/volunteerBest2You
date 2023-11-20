@@ -1,6 +1,7 @@
 package com.example.best2help
 
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -24,6 +25,19 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+//        val sharedPref = getSharedPreferences("my_app_session", Context.MODE_PRIVATE)
+//        val userEmail = sharedPref.getString("user_email", null).toString()
+//
+//        DialogUtils.getDetails(userEmail) { volunteer ->
+//            if (volunteer != null) {
+//                // Volunteer found, do something with the details
+//                DialogUtils.succsessDialog(this, volunteer.uid.toString())
+//            } else {
+//                // Volunteer not found
+//                DialogUtils.errorDialog(this, "Problem...")
+//            }
+//        }
 
         // Get value
         val intent = intent

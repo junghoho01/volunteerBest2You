@@ -1,6 +1,7 @@
 package com.example.best2help
 
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -66,28 +67,40 @@ class EventListingActivity : AppCompatActivity() {
             // Get a reference to the Firebase database
             val dbref = FirebaseDatabase.getInstance().getReference("Volunteer")
 
-            // Use orderByChild to query based on the uid
-            val query = dbref.orderByChild("uid").equalTo("20231116143606-cf5e191f")
+            val sharedPref = getSharedPreferences("my_app_session", Context.MODE_PRIVATE)
+            val userEmail = sharedPref.getString("user_email", null).toString()
 
-            query.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        for (eventSnapshot in snapshot.children) {
-                            val volunteer = eventSnapshot.getValue(Volunteer::class.java)
-                            splitSkillset(volunteer!!.skills.toString())
+            DialogUtils.getDetails(userEmail) { volunteer ->
+                if (volunteer != null) {
+                    // Volunteer found, do something with the details
+                    // Use orderByChild to query based on the uid
+                    val query = dbref.orderByChild("uid").equalTo(volunteer.uid.toString())
+
+                    query.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            if (snapshot.exists()) {
+                                for (eventSnapshot in snapshot.children) {
+                                    val volunteer = eventSnapshot.getValue(Volunteer::class.java)
+                                    splitSkillset(volunteer!!.skills.toString())
+                                }
+                            } else {
+                                // Handle the case where no event with the specified ID is found
+                                // For example, display an error message or navigate back
+                                Log.d(ContentValues.TAG, "No volunteer found with ID")
+                            }
                         }
-                    } else {
-                        // Handle the case where no event with the specified ID is found
-                        // For example, display an error message or navigate back
-                        Log.d(ContentValues.TAG, "No volunteer found with ID")
-                    }
-                }
 
-                override fun onCancelled(error: DatabaseError) {
-                    // Handle onCancelled error
-                    Log.e(ContentValues.TAG, "Firebase Database onCancelled: ${error.message}")
+                        override fun onCancelled(error: DatabaseError) {
+                            // Handle onCancelled error
+                            Log.e(ContentValues.TAG, "Firebase Database onCancelled: ${error.message}")
+                        }
+                    })
+                } else {
+                    // Volunteer not found
+                    DialogUtils.errorDialog(this, "Databaser Error...")
                 }
-            })
+            }
+
         } catch (e: Exception) {
             // Handle other exceptions
             Log.e(ContentValues.TAG, "Error fetching volunteer details: ${e.message}", e)
