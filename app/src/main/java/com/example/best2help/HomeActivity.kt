@@ -78,7 +78,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun toHistory() {
-        var intent = Intent(this, ProfileActivity::class.java)
+        var intent = Intent(this, HistoryActivity::class.java)
         startActivity(intent)
     }
 
