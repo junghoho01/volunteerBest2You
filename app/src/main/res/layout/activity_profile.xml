@@ -84,7 +84,8 @@
                 android:layout_width="300dp"
                 android:layout_height="48dp"
                 android:ems="10"
-                android:inputType="textEmailAddress"
+                android:focusable="false"
+                android:clickable="false"
                 android:hint="text@gmail.com"
                 android:layout_marginLeft="36dp"
                 android:layout_marginRight="40dp"/>
@@ -130,7 +131,7 @@
                 android:layout_width="300dp"
                 android:layout_height="48dp"
                 android:ems="10"
-                android:inputType="number"
+                android:inputType="text"
                 android:hint="Kuala Lumpur"
                 android:layout_marginLeft="36dp"
                 android:layout_marginRight="40dp"/>

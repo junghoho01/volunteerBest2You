@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HistoryActivity"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/img_arrowBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/ic_baseline_arrow_back_ios_new_24"
+        android:layout_margin="10dp"/>
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Joined Event History"
+        android:textStyle="bold"
+        android:layout_toRightOf="@id/img_arrowBack"
+        android:layout_margin="10dp"
+        android:textColor="#098B9A"
+        android:textSize="20dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/joinedEventListRecyclerView"
+        android:layout_below="@id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/joined_event_cardlist"/>
+
+</RelativeLayout>

@@ -33,7 +33,7 @@ class EventListingActivity : AppCompatActivity() {
         getEventListDate()
 
         binding.imgArrowBack.setOnClickListener {
-            toHomeActivity()
+            finish()
         }
 
         binding.btnAutoJoinEvent.setOnClickListener {
@@ -144,17 +144,24 @@ class EventListingActivity : AppCompatActivity() {
 
         }
 
-        if (bestMatchEvent != null){
-            DialogUtils.joinEventDialog(this, "Best Match Event: ${bestMatchEvent?.eventName.toString()}", "20231116143606-cf5e191f", bestMatchEvent)
-        } else {
-            DialogUtils.errorDialog(this, "Oops, no event matched you..")
+        // Get the uid
+        val sharedPref = getSharedPreferences("my_app_session", Context.MODE_PRIVATE)
+        val userEmail = sharedPref.getString("user_email", null).toString()
+
+        DialogUtils.getDetails(userEmail) { volunteer ->
+            if (volunteer != null) {
+                // Volunteer found, do something with the details
+                if (bestMatchEvent != null){
+                    DialogUtils.joinEventDialog(this, "Best Match Event: ${bestMatchEvent?.eventName.toString()}", volunteer.uid.toString(), bestMatchEvent, userEmail)
+                } else {
+                    DialogUtils.errorDialog(this, "Oops, no event matched you..")
+                }
+            } else {
+                // Volunteer not found
+                DialogUtils.errorDialog(this, "Databaser Error...")
+            }
         }
 
-    }
-
-    private fun toHomeActivity() {
-        var intent = Intent(this, HomeActivity::class.java)
-        startActivity(intent)
     }
 
     private fun getEventListDate() {

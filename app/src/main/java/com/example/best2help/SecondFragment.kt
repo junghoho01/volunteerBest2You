@@ -88,12 +88,14 @@ class SecondFragment : Fragment() {
 
                 if (isEmailValid(etEmail.text.toString())){
 
-                    if (etPass.text.toString() == etCpass.text.toString()){
+                    if (verifyPasswordFormat(etPass.text.toString())){
 
-                        // To add data to Realtime Firebase
+                        if (etPass.text.toString() == etCpass.text.toString()){
+
+                            // To add data to Realtime Firebase
 
 //                        dbrefUser = FirebaseDatabase.getInstance().getReference("Volunteer")
-                        val uid = generateUid()
+                            val uid = generateUid()
 //                        val reference = dbrefUser.child(uid)
 //                        val userData = mapOf(
 //                            "address" to etaddress.text.toString(),
@@ -107,18 +109,22 @@ class SecondFragment : Fragment() {
 //                        )
 //                        reference.setValue(userData)
 
-                        var intent = Intent(context, ConfirmRegisterActivity::class.java)
-                        intent.putExtra("EMAIL_KEY", etEmail.text.toString())
-                        intent.putExtra("ADDRESS_KEY", etaddress.text.toString())
-                        intent.putExtra("CONTACT_KEY", etContact.text.toString())
-                        intent.putExtra("PASS_KEY", etPass.text.toString())
-                        intent.putExtra("UID_KEY", uid)
-                        intent.putExtra("USERNAME_KEY", etUsername.text.toString())
-                        intent.putExtra("SKILLS_KEY", textViewSkillset.text.toString())
-                        startActivity(intent)
+                            var intent = Intent(context, ConfirmRegisterActivity::class.java)
+                            intent.putExtra("EMAIL_KEY", etEmail.text.toString())
+                            intent.putExtra("ADDRESS_KEY", etaddress.text.toString())
+                            intent.putExtra("CONTACT_KEY", etContact.text.toString())
+                            intent.putExtra("PASS_KEY", etPass.text.toString())
+                            intent.putExtra("UID_KEY", uid)
+                            intent.putExtra("USERNAME_KEY", etUsername.text.toString())
+                            intent.putExtra("SKILLS_KEY", textViewSkillset.text.toString())
+                            startActivity(intent)
+
+                        } else {
+                            DialogUtils.errorDialog(requireContext(), "Oops, password not match!")
+                        }
 
                     } else {
-                        DialogUtils.errorDialog(requireContext(), "Oops, password not match!")
+                        DialogUtils.errorDialog(requireContext(), "Oops, Allow only alphabet characters, digits, and the specified symbols, and the password must be at least 8 characters long.")
                     }
 
                 } else {
@@ -137,6 +143,14 @@ class SecondFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun verifyPasswordFormat(password: String): Boolean {
+        // Define a regular expression for password validation
+        val passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@\$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,}\$"
+
+        // Match the password against the regex
+        return password.matches(passwordRegex.toRegex())
     }
 
     private fun fetchSkills() {

@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HomeActivity"
-    android:layout_margin="10dp">
+>
+
 
     <ImageView
         android:id="@+id/img_logo"
@@ -26,27 +27,10 @@
         android:textStyle="bold"
         android:textSize="17sp"/>
 
-    <!-- Add a horizontal line below the TextView -->
-    <View
-        android:id="@+id/v_line"
-        android:layout_below="@id/tv_event"
-        android:layout_width="40dp"
-        android:layout_height="4dp"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="10dp"
-        android:background="#00BBC4" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/eventRecyclerView"
-        android:layout_below="@id/v_line"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        tools:listitem="@layout/event_list"/>
-
     <TextView
         android:id="@+id/tv_more"
-        android:layout_below="@id/eventRecyclerView"
+        android:layout_toRightOf="@id/tv_event"
+        android:layout_below="@id/img_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/viewmore"
@@ -57,5 +41,92 @@
         android:textSize="15sp"
         android:textColor="#064D5A"
         android:textStyle="bold"/>
+
+    <!-- Add a horizontal line below the TextView -->
+    <View
+        android:id="@+id/v_line"
+        android:layout_below="@id/tv_event"
+        android:layout_width="60dp"
+        android:layout_height="4dp"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:background="#00BBC4" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/eventRecyclerView"
+        android:layout_below="@id/v_line"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" />
+
+    <TextView
+        android:id="@+id/tv_recentlyAdded"
+        android:layout_below="@id/eventRecyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Upcoming 5 Event"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:textSize="17sp"/>
+
+    <View
+        android:id="@+id/v_recentlyAddedline"
+        android:layout_below="@id/tv_recentlyAdded"
+        android:layout_width="90dp"
+        android:layout_height="4dp"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:background="#00BBC4" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tv_recentlyAddedRecyclerView"
+        android:layout_below="@id/tv_recentlyAdded"
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" />
+
+    <LinearLayout
+        android:id="@+id/btm_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#ffffff"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/img_history"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:contentDescription="Section 1"
+            android:clickable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="10dp"
+            android:src="@drawable/baseline_history_24" />
+
+        <ImageView
+            android:id="@+id/img_home"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:contentDescription="Section 1"
+            android:clickable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="10dp"
+            android:src="@drawable/baseline_home_24" />
+
+        <ImageView
+            android:id="@+id/img_profile"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:contentDescription="Section 1"
+            android:clickable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="10dp"
+            android:src="@drawable/baseline_person_24" />
+
+    </LinearLayout>
 
 </RelativeLayout>

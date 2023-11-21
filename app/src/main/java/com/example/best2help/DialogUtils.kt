@@ -4,16 +4,17 @@ import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.renderscript.Sampler.Value
-import android.util.Log
 import android.view.Window
 import android.widget.Button
 import android.widget.TextView
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.UUID
 
 object DialogUtils {
 
@@ -85,7 +86,13 @@ object DialogUtils {
         dialog.show()
     }
 
-    fun joinEventDialog(context: Context, title: String, uid: String, bestMatchEvent: Event) {
+    fun joinEventDialog(
+        context: Context,
+        title: String,
+        uid: String,
+        bestMatchEvent: Event,
+        userEmail: String
+    ) {
 
         //Dismiss the previous dialog if it exists
         previousDialog?.dismiss()
@@ -97,10 +104,13 @@ object DialogUtils {
         val text = dialog.findViewById<TextView>(R.id.tv_title)
         text.text = title
         val btnDeny = dialog.findViewById<Button>(R.id.btnDeny)
-        val btnAccept = dialog.findViewById<Button>(R.id.btnDeny)
-
+        val btnAccept = dialog.findViewById<Button>(R.id.btnAccept)
         btnDeny.setOnClickListener {
             declineEvent(context, uid, bestMatchEvent)
+        }
+
+        btnAccept.setOnClickListener {
+            acceptEvent(context, uid, bestMatchEvent, userEmail)
         }
 
         // Set the current dialog as the previous dialog
@@ -112,6 +122,40 @@ object DialogUtils {
     fun dismissDialog(context: Context) {
         //Dismiss the previous dialog if it exists
         previousDialog?.dismiss()
+    }
+
+    private fun acceptEvent(context: Context, uid: String, bestMatchEvent: Event, userEmail: String) {
+        var dbrefJointEvent = FirebaseDatabase.getInstance().getReference("JointEvent")
+        val jointUniqueId = generateUid()
+
+        getDetails(userEmail) { volunteer ->
+            if (volunteer != null) {
+                // Volunteer found, do something with the details
+
+                val reference = dbrefJointEvent.child(jointUniqueId)
+                val jointEventData = mapOf(
+                    "address" to bestMatchEvent.location.toString(),
+                    "eventId" to bestMatchEvent.eventId.toString(),
+                    "jointeventId" to jointUniqueId,
+                    "jointeventName" to bestMatchEvent.eventName.toString(),
+                    "phoneNo" to volunteer.contact.toString(),
+                    "skillSet" to volunteer.skills.toString(),
+                    "tryNia" to bestMatchEvent.tryNia.toString(),
+                    "volunteerEmail" to userEmail,
+                    "volunteerName" to volunteer.username.toString()
+                )
+
+                reference.setValue(jointEventData).addOnSuccessListener {
+                    succsessDialog(context, "Joined Successfully!")
+                }.addOnFailureListener {
+                    errorDialog(context, "Oops, Fail to join!")
+                }
+
+            } else {
+                // Volunteer not found
+                errorDialog(context, "Database Error...")
+            }
+        }
     }
 
     fun declineEvent(context: Context, uid: String, bestMatchEvent: Event) {
@@ -194,6 +238,13 @@ object DialogUtils {
                 callback.invoke(null)
             }
         })
+    }
+
+    private fun generateUid(): String {
+        val timestamp = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(Date())
+        val randomPart = UUID.randomUUID().toString().substring(0, 8)
+
+        return "$timestamp-$randomPart"
     }
 
 
