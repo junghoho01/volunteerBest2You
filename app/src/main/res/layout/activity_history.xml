@@ -29,7 +29,7 @@
         android:id="@+id/joinedEventListRecyclerView"
         android:layout_below="@id/tv_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         tools:listitem="@layout/joined_event_cardlist"/>
 
 </RelativeLayout>

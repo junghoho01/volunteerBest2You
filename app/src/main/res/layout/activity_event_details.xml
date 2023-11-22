@@ -223,6 +223,30 @@
                 android:paddingTop="10dp"
                 android:paddingLeft="15dp"/>
 
+            <TextView
+                android:id="@+id/tv_map"
+                android:layout_below="@id/tv_dateDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Map"
+                android:textColor="#098B9A"
+                android:gravity="center"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:paddingTop="10dp"
+                android:paddingLeft="15dp"/>
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapView"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_below="@id/tv_map"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:layout_marginBottom="10dp"
+                app:liteMode="true" />
+
         </LinearLayout>
 
     </ScrollView>

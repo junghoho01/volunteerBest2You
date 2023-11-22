@@ -1,10 +1,19 @@
 package com.example.best2help
 
+import android.app.Dialog
 import android.content.ContentValues.TAG
+import android.location.Geocoder
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import com.example.best2help.databinding.ActivityEventDetailsBinding
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -13,9 +22,12 @@ import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class EventDetailsActivity : AppCompatActivity() {
+class EventDetailsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var binding : ActivityEventDetailsBinding
+    private lateinit var mapView: MapView
+    private lateinit var googleMap: GoogleMap
+
     // Assuming event.eventStartTime is a string in the format "HH:mm"
     val inputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
     val outputFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
@@ -30,6 +42,67 @@ class EventDetailsActivity : AppCompatActivity() {
         val id = intent.getStringExtra("EVENTID_KEY").toString()
 
         showDetails(id)
+
+        // Initialize mapView
+        mapView = binding.mapView
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync(this)
+
+        binding.imgArrowBack.setOnClickListener {
+            finish()
+        }
+    }
+
+    override fun onMapReady(map: GoogleMap) {
+        googleMap = map
+
+        // To use address
+        val address = binding.tvAddressDetails.text.toString()
+        val geocoder = Geocoder(this)
+
+        try {
+            val locationList = geocoder.getFromLocationName(address, 1)
+            if (locationList!!.isNotEmpty()){
+                val latitude = locationList[0].latitude
+                val longitude = locationList[0].longitude
+
+                val eventLocation = LatLng(latitude, longitude)
+                googleMap.addMarker(MarkerOptions().position(eventLocation).title("Event Location"))
+                googleMap.moveCamera(CameraUpdateFactory.newLatLng(eventLocation))
+                googleMap.animateCamera(CameraUpdateFactory.zoomTo(15f))
+            } else {
+                DialogUtils.errorDialog(this, "Oops, Map Error!")
+            }
+        } catch (e: Exception) {
+            // Handle exceptions (e.g., IOException, IllegalArgumentException) here
+            e.printStackTrace()
+        }
+
+//        // Set up the marker for the event location
+//        val eventLocation = LatLng(12.3456, 78.9101) // Replace with your actual coordinates
+//        googleMap.addMarker(MarkerOptions().position(eventLocation).title("Event Location"))
+//        googleMap.moveCamera(CameraUpdateFactory.newLatLng(eventLocation))
+//        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15f))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mapView.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView.onLowMemory()
     }
 
     private fun showDetails(id: String) {
@@ -105,4 +178,5 @@ class EventDetailsActivity : AppCompatActivity() {
         // Create a formatted string with bullet points
         return skillsList.joinToString(separator = "\n● ")
     }
+
 }

@@ -2,6 +2,7 @@ package com.example.best2help
 
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.Window
@@ -60,6 +61,32 @@ object DialogUtils {
 
         // Set the current dialog as the previous dialog
         previousDialog = dialog
+
+        dialog.show()
+    }
+
+    fun succsessDialogV2(context: Context, title: String, uid: String, bestMatchEvent: Event) {
+
+        //Dismiss the previous dialog if it exists
+        previousDialog?.dismiss()
+
+        val dialog = Dialog(context)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setContentView(R.layout.custom_success)
+        val text = dialog.findViewById<TextView>(R.id.tv_title)
+        text.text = title
+        val btnClose = dialog.findViewById<Button>(R.id.btnDeniedClose)
+        btnClose.setOnClickListener {
+            declineEvent(context, uid, bestMatchEvent)
+            dialog.dismiss()
+        }
+
+        // Set the current dialog as the previous dialog
+        previousDialog = dialog
+
+        // Set canceledOnTouchOutside to false
+        dialog.setCanceledOnTouchOutside(false)
 
         dialog.show()
     }
@@ -145,8 +172,12 @@ object DialogUtils {
                     "volunterName" to volunteer.username.toString()
                 )
 
+                // Will also decline
+                // To optimize the loading
+
                 reference.setValue(jointEventData).addOnSuccessListener {
-                    succsessDialog(context, "Joined Successfully!")
+                    succsessDialogV2(context, "Joined Successfully!", uid, bestMatchEvent)
+
                 }.addOnFailureListener {
                     errorDialog(context, "Oops, Fail to join!")
                 }
@@ -184,6 +215,11 @@ object DialogUtils {
                             // Update successful, handle success
                             // You can add any additional logic here
                             dismissDialog(context)
+
+                            // Refresh Activity
+                            val intent = Intent(context, EventListingActivity::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                            context.startActivity(intent)
                         }
                         .addOnFailureListener {
                             // Update failed, handle failure
@@ -199,6 +235,11 @@ object DialogUtils {
                             // Update successful, handle success
                             // You can add any additional logic here
                             dismissDialog(context)
+
+                            // Refresh Activity
+                            val intent = Intent(context, EventListingActivity::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                            context.startActivity(intent)
                         }
                         .addOnFailureListener {
                             // Update failed, handle failure

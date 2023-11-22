@@ -51,16 +51,6 @@ class EventListingActivity : AppCompatActivity() {
     }
 
     private fun matchEvent() {
-//
-//        // Hold for 2 seconds
-//        Handler().postDelayed({
-//            // Your code to be executed after 2 seconds
-//            // Dismiss the previous dialog if it exists
-//            DialogUtils.dismissDialog(this)
-//        }, 2000) // 2000 milliseconds = 2 seconds
-
-        // Get event with valid eventApproval / eventStatus
-//        DialogUtils.succsessDialog(this, eventArrayList.count().toString())
 
         // Get Own skillset
         try {
@@ -142,6 +132,8 @@ class EventListingActivity : AppCompatActivity() {
                 maxMatchingSkills = matchingSkills
             }
 
+            // I will also need to check if
+
         }
 
         // Get the uid
@@ -165,47 +157,60 @@ class EventListingActivity : AppCompatActivity() {
     }
 
     private fun getEventListDate() {
-        try {
-            // Get data from event
-            dbref = FirebaseDatabase.getInstance().getReference("Event")
-            dbref.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        for (eventSnapshot in snapshot.children) {
-                            val event = eventSnapshot.getValue(Event::class.java)
 
-                            // Event status need to be approve
-                            if (event?.eventApproval == "Approve") {
+        val sharedPref = getSharedPreferences("my_app_session", Context.MODE_PRIVATE)
+        val userEmail = sharedPref.getString("user_email", null).toString()
 
-                                if (event?.eventStatus == "Ongoing") {
-                                    eventArrayList.add(event!!)
+        DialogUtils.getDetails(userEmail) { volunteer ->
+            if (volunteer != null) {
+                // Volunteer found, do something with the details
+                var declineEventString = volunteer.declineEvent.toString()
+
+                try {
+                    // Get data from event
+                    dbref = FirebaseDatabase.getInstance().getReference("Event")
+                    dbref.addValueEventListener(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            if (snapshot.exists()) {
+                                for (eventSnapshot in snapshot.children) {
+                                    val event = eventSnapshot.getValue(Event::class.java)
+
+                                    // Event status need to be approve
+                                    if (event?.eventApproval == "Approve" && event?.eventStatus == "Ongoing"
+                                        && !(declineEventString.split(";").contains(event?.eventId.toString()))) {
+                                            eventArrayList.add(event!!)
+                                    }
                                 }
 
+                                // For listener
+                                var adapter = EventListAdapter(eventArrayList)
+                                eventRecyclerView.adapter = adapter
+                                adapter.setOnItemClickListener(object : EventListAdapter.onItemClickListener{
+                                    override fun onItemClick(position: Int) {
+                                        var id = eventArrayList[position].eventId
+                                        var intent = Intent(this@EventListingActivity, EventDetailsActivity::class.java)
+                                        intent.putExtra("EVENTID_KEY", id)
+                                        startActivity(intent)
+                                    }
+                                })
                             }
                         }
 
-                        // For listener
-                        var adapter = EventListAdapter(eventArrayList)
-                        eventRecyclerView.adapter = adapter
-                        adapter.setOnItemClickListener(object : EventListAdapter.onItemClickListener{
-                            override fun onItemClick(position: Int) {
-                                var id = eventArrayList[position].eventId
-                                var intent = Intent(this@EventListingActivity, EventDetailsActivity::class.java)
-                                intent.putExtra("EVENTID_KEY", id)
-                                startActivity(intent)
-                            }
-                        })
-                    }
+                        override fun onCancelled(error: DatabaseError) {
+                            // Handle onCancelled error
+                            Log.e(ContentValues.TAG, "Firebase Database onCancelled: ${error.message}")
+                        }
+                    })
+                } catch (e: Exception) {
+                    // Handle other exceptions
+                    Log.e(ContentValues.TAG, "Error fetching event data: ${e.message}", e)
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-                    // Handle onCancelled error
-                    Log.e(ContentValues.TAG, "Firebase Database onCancelled: ${error.message}")
-                }
-            })
-        } catch (e: Exception) {
-            // Handle other exceptions
-            Log.e(ContentValues.TAG, "Error fetching event data: ${e.message}", e)
+            } else {
+                // Volunteer not found
+                DialogUtils.errorDialog(this, "Databaser Error...")
+            }
         }
+
+
     }
 }

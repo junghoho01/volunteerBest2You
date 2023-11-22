@@ -3,7 +3,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="forgotpassword"><u>Forgot Password ?</u></string>
-    <string name="viewmore"><u>View More</u></string>
+    <string name="viewmore"><u>More Event</u></string>
     <string name="title_activity_event_list">EventListActivity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
