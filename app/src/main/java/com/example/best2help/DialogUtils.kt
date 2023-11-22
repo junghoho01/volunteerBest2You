@@ -135,14 +135,14 @@ object DialogUtils {
                 val reference = dbrefJointEvent.child(jointUniqueId)
                 val jointEventData = mapOf(
                     "address" to bestMatchEvent.location.toString(),
-                    "eventId" to bestMatchEvent.eventId.toString(),
+                    "eventID" to bestMatchEvent.eventId.toString(),
                     "jointeventId" to jointUniqueId,
                     "jointeventName" to bestMatchEvent.eventName.toString(),
                     "phoneNo" to volunteer.contact.toString(),
                     "skillSet" to volunteer.skills.toString(),
                     "tryNia" to bestMatchEvent.tryNia.toString(),
-                    "volunteerEmail" to userEmail,
-                    "volunteerName" to volunteer.username.toString()
+                    "volunterEmail" to userEmail,
+                    "volunterName" to volunteer.username.toString()
                 )
 
                 reference.setValue(jointEventData).addOnSuccessListener {
@@ -245,6 +245,56 @@ object DialogUtils {
         val randomPart = UUID.randomUUID().toString().substring(0, 8)
 
         return "$timestamp-$randomPart"
+    }
+
+    fun getEventDetails(eventId: String, callback: (Event?) -> Unit) {
+        val dbrefUser = FirebaseDatabase.getInstance().getReference("Event")
+
+        val query = dbrefUser.orderByChild("eventId").equalTo(eventId)
+
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // Assuming there's only one user with the provided email
+                    for (userSnapshot in dataSnapshot.children) {
+                        val eventDetails = userSnapshot.getValue(Event::class.java)
+                        callback.invoke(eventDetails)
+                        return
+                    }
+                }
+                callback.invoke(null)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle errors
+                callback.invoke(null)
+            }
+        })
+    }
+
+    fun getOrganizerDetails(organizerId: String, callback: (Organizer?) -> Unit) {
+        val dbrefUser = FirebaseDatabase.getInstance().getReference("Organizer")
+
+        val query = dbrefUser.orderByChild("orgId").equalTo(organizerId)
+
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // Assuming there's only one user with the provided email
+                    for (userSnapshot in dataSnapshot.children) {
+                        val orgDetails = userSnapshot.getValue(Organizer::class.java)
+                        callback.invoke(orgDetails)
+                        return
+                    }
+                }
+                callback.invoke(null)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle errors
+                callback.invoke(null)
+            }
+        })
     }
 
 

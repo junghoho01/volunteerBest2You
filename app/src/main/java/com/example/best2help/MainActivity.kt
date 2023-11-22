@@ -51,5 +51,12 @@ class MainActivity : AppCompatActivity() {
                 tabLayout.selectTab(tabLayout.getTabAt(position))
             }
         })
+
+        val intent = intent
+        val flag = intent.getStringExtra("RESETPASS_KEY").toString()
+
+        if (flag == "1") {
+            DialogUtils.succsessDialog(this, "Congratulations! Password reset successfully!")
+        }
     }
 }

@@ -82,7 +82,6 @@ class ProfileActivity : AppCompatActivity() {
                     )
 
                     val dbrefUser = FirebaseDatabase.getInstance().getReference("Volunteer").child(volunteer.uid.toString())
-                    val updateVolunteerRef = dbrefUser.child("declineEvent")
 
                     dbrefUser.updateChildren(volunteerMap)
                         .addOnSuccessListener {

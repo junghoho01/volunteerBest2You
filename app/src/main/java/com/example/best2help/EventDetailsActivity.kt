@@ -10,10 +10,15 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class EventDetailsActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityEventDetailsBinding
+    // Assuming event.eventStartTime is a string in the format "HH:mm"
+    val inputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+    val outputFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,9 +75,26 @@ class EventDetailsActivity : AppCompatActivity() {
             binding.tvPositionDetails.text = "● " + formatSkills(event.skillSet!!)
             binding.tvAddressDetails.text = event.location
             binding.tvDateDetails.text = event.eventStartDate
-            binding.tvTimeDetails.text = event.eventStartTime
-            Picasso.get().load(event.eventPicName).into(binding.imgEvent)
 
+            val startTime = inputFormat.parse(event.eventStartTime)
+            val formattedTime = outputFormat.format(startTime)
+            binding.tvTimeDetails.text = formattedTime
+
+            // To fetch contactNo and email
+
+            DialogUtils.getOrganizerDetails(event.tryNia.toString()) { org ->
+                if (org != null) {
+                    // org found, do something with the details
+                    binding.tvEmailDetails.text = org.organizerEmail.toString()
+                    binding.tvContactNoDetails.text = org.phoneNo.toString()
+                } else {
+                    // Volunteer not found
+                    DialogUtils.errorDialog(this, "Databaser Error...")
+                }
+            }
+
+
+            Picasso.get().load(event.eventPicName).into(binding.imgEvent)
         }
     }
 

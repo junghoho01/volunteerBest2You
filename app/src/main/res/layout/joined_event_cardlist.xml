@@ -36,7 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Title: All For Love"
-                android:textSize="18dp"
+                android:textSize="16dp"
                 android:textColor="#064D5A"
                 android:paddingLeft="15dp"
                 android:textStyle="bold" />
@@ -54,7 +54,7 @@
                 android:id="@+id/tv_eventStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Completed"
+                android:text="Joined"
                 android:textSize="14dp"
                 android:paddingTop="2dp"
                 android:paddingLeft="15dp"

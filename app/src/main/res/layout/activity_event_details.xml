@@ -177,6 +177,51 @@
                 android:paddingTop="10dp"
                 android:paddingLeft="15dp"/>
 
+            <TextView
+                android:id="@+id/tv_email"
+                android:layout_below="@id/tv_dateDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:textColor="#098B9A"
+                android:gravity="center"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:paddingTop="10dp"
+                android:paddingLeft="15dp"/>
+
+            <TextView
+                android:id="@+id/tv_emailDetails"
+                android:layout_below="@id/tv_timeTitle"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="7:00 AM"
+                android:textSize="16dp"
+                android:paddingTop="10dp"
+                android:paddingLeft="15dp"/>
+
+            <TextView
+                android:id="@+id/tv_contactNo"
+                android:layout_below="@id/tv_dateDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Contact No"
+                android:textColor="#098B9A"
+                android:gravity="center"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:paddingTop="10dp"
+                android:paddingLeft="15dp"/>
+
+            <TextView
+                android:id="@+id/tv_contactNoDetails"
+                android:layout_below="@id/tv_contactNo"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="7:00 AM"
+                android:textSize="16dp"
+                android:paddingTop="10dp"
+                android:paddingLeft="15dp"/>
 
         </LinearLayout>
 
