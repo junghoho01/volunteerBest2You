@@ -65,7 +65,7 @@ object DialogUtils {
         dialog.show()
     }
 
-    fun succsessDialogV2(context: Context, title: String, uid: String, bestMatchEvent: Event) {
+    fun succsessDialogV2(context: Context, title: String, uid: String, bestMatchEvent: Event, toHome: String) {
 
         //Dismiss the previous dialog if it exists
         previousDialog?.dismiss()
@@ -78,7 +78,7 @@ object DialogUtils {
         text.text = title
         val btnClose = dialog.findViewById<Button>(R.id.btnDeniedClose)
         btnClose.setOnClickListener {
-            declineEvent(context, uid, bestMatchEvent)
+            declineEvent(context, uid, bestMatchEvent, toHome)
             dialog.dismiss()
         }
 
@@ -133,7 +133,7 @@ object DialogUtils {
         val btnDeny = dialog.findViewById<Button>(R.id.btnDeny)
         val btnAccept = dialog.findViewById<Button>(R.id.btnAccept)
         btnDeny.setOnClickListener {
-            declineEvent(context, uid, bestMatchEvent)
+            declineEvent(context, uid, bestMatchEvent, "")
         }
 
         btnAccept.setOnClickListener {
@@ -176,7 +176,7 @@ object DialogUtils {
                 // To optimize the loading
 
                 reference.setValue(jointEventData).addOnSuccessListener {
-                    succsessDialogV2(context, "Joined Successfully!", uid, bestMatchEvent)
+                    succsessDialogV2(context, "Joined Successfully!", uid, bestMatchEvent, "")
 
                 }.addOnFailureListener {
                     errorDialog(context, "Oops, Fail to join!")
@@ -189,7 +189,7 @@ object DialogUtils {
         }
     }
 
-    fun declineEvent(context: Context, uid: String, bestMatchEvent: Event) {
+    fun declineEvent(context: Context, uid: String, bestMatchEvent: Event, toHome: String) {
         val dbrefUser = FirebaseDatabase.getInstance().getReference("Volunteer").child(uid)
         val declineEventRef = dbrefUser.child("declineEvent")
 
@@ -217,9 +217,16 @@ object DialogUtils {
                             dismissDialog(context)
 
                             // Refresh Activity
-                            val intent = Intent(context, EventListingActivity::class.java)
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                            context.startActivity(intent)
+                            if (toHome == "1"){
+                                val intent = Intent(context, HomeActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                context.startActivity(intent)
+                            } else {
+                                val intent = Intent(context, EventListingActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                context.startActivity(intent)
+                            }
+
                         }
                         .addOnFailureListener {
                             // Update failed, handle failure
@@ -237,9 +244,15 @@ object DialogUtils {
                             dismissDialog(context)
 
                             // Refresh Activity
-                            val intent = Intent(context, EventListingActivity::class.java)
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                            context.startActivity(intent)
+                            if (toHome == "1"){
+                                val intent = Intent(context, HomeActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                context.startActivity(intent)
+                            } else {
+                                val intent = Intent(context, EventListingActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                context.startActivity(intent)
+                            }
                         }
                         .addOnFailureListener {
                             // Update failed, handle failure
@@ -338,5 +351,85 @@ object DialogUtils {
         })
     }
 
+    fun independentJoin(context: Context, title: String, eventId: String, userEmail: String) {
 
+        //Dismiss the previous dialog if it exists
+        previousDialog?.dismiss()
+
+        val dialog = Dialog(context)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setContentView(R.layout.custom_joinevent)
+        val text = dialog.findViewById<TextView>(R.id.tv_title)
+        text.text = title
+        val btnDeny = dialog.findViewById<Button>(R.id.btnDeny)
+        val btnAccept = dialog.findViewById<Button>(R.id.btnAccept)
+        val yes = dialog.findViewById<TextView>(R.id.btnAccept)
+        val no = dialog.findViewById<TextView>(R.id.btnDeny)
+        yes.text = "Yes"
+        no.text = "No"
+
+        btnDeny.setOnClickListener { dismissDialog(context) }
+        btnAccept.setOnClickListener {
+            addToJointandDecline(context, eventId, userEmail)
+        }
+
+        // Set the current dialog as the previous dialog
+        previousDialog = dialog
+
+        dialog.show()
+    }
+
+    private fun addToJointandDecline(context: Context, eventId: String, userEmail: String) {
+        // Search for event details first
+
+        getEventDetails(eventId) { event ->
+            if (event != null) {
+                // Volunteer found, addData
+                // succsessDialog(context, "Dialog Check")
+
+                var dbrefJointEvent = FirebaseDatabase.getInstance().getReference("JointEvent")
+                val jointUniqueId = generateUid()
+
+                getDetails(userEmail) { volunteer ->
+                    if (volunteer != null) {
+                        // Volunteer found, do something with the details
+
+                        val reference = dbrefJointEvent.child(jointUniqueId)
+                        val jointEventData = mapOf(
+                            "address" to event.location.toString(),
+                            "eventID" to event.eventId.toString(),
+                            "jointeventId" to jointUniqueId,
+                            "jointeventName" to event.eventName.toString(),
+                            "phoneNo" to volunteer.contact.toString(),
+                            "skillSet" to volunteer.skills.toString(),
+                            "tryNia" to event.tryNia.toString(),
+                            "volunterEmail" to userEmail,
+                            "volunterName" to volunteer.username.toString()
+                        )
+
+                        // Will also decline
+                        // To optimize the loading
+
+                        reference.setValue(jointEventData).addOnSuccessListener {
+                            var toHome = "1"
+                            succsessDialogV2(context, "Joined Successfully!", volunteer.uid.toString(), event, toHome)
+
+                        }.addOnFailureListener {
+                            errorDialog(context, "Oops, Fail to join!")
+                        }
+
+                    } else {
+                        // Volunteer not found
+                        errorDialog(context, "Database Error...")
+                    }
+                }
+
+            } else {
+                // Volunteer not found
+                errorDialog(context, "Databaser Error...")
+            }
+        }
+
+    }
 }

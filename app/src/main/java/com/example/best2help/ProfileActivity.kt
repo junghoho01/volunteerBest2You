@@ -74,22 +74,27 @@ class ProfileActivity : AppCompatActivity() {
             if (volunteer != null) {
                 if (username.isNotEmpty() && contactNo.isNotEmpty() && address.isNotEmpty() && skillset.isNotEmpty()){
 
-                    val volunteerMap = mapOf(
-                        "username" to username,
-                        "contact" to contactNo,
-                        "address" to address,
-                        "skills" to skillset
-                    )
+                    if(validNumber(contactNo)){
+                        val volunteerMap = mapOf(
+                            "username" to username,
+                            "contact" to contactNo,
+                            "address" to address,
+                            "skills" to skillset
+                        )
 
-                    val dbrefUser = FirebaseDatabase.getInstance().getReference("Volunteer").child(volunteer.uid.toString())
+                        val dbrefUser = FirebaseDatabase.getInstance().getReference("Volunteer").child(volunteer.uid.toString())
 
-                    dbrefUser.updateChildren(volunteerMap)
-                        .addOnSuccessListener {
-                            DialogUtils.succsessDialog(this, "Update Succesfully!")
-                        }
-                        .addOnFailureListener {
-                            DialogUtils.errorDialog(this, "Oops, Fail to update...")
-                        }
+                        dbrefUser.updateChildren(volunteerMap)
+                            .addOnSuccessListener {
+                                DialogUtils.succsessDialog(this, "Update Succesfully!")
+                            }
+                            .addOnFailureListener {
+                                DialogUtils.errorDialog(this, "Oops, Fail to update...")
+                            }
+                    } else {
+                        DialogUtils.errorDialog(this, "Oops, wrong number format!")
+
+                    }
 
                 } else {
                     DialogUtils.errorDialog(this, "Oops, it's not complete yet!")
@@ -158,14 +163,26 @@ class ProfileActivity : AppCompatActivity() {
                 // dismiss dialog
                 dialogInterface.dismiss()
             }
+
             builder.setNeutralButton("Clear All") { _, _ ->
                 // clear selectedSkillsSet
                 selectedSkillsSet.clear()
+
+                // Update the selectedSkillSet array to reflect the changes
+                for (i in skillArray.indices) {
+                    selectedSkillSet[i] = false
+                }
+
+                // Clear the text in the textViewSkillset
+                textViewSkillset.text = ""
             }
+
             // show dialog
             builder.show()
         }
     }
+
+
 
 
     private fun fetchSkills() {
@@ -208,6 +225,14 @@ class ProfileActivity : AppCompatActivity() {
                 // Handle onCancelled
             }
         })
+    }
+
+    private fun validNumber(number: String): Boolean {
+        // Define the regular expression for valid phone numbers
+        val regex = Regex("^\\+60\\d{10}|^\\d{10,11}|^\\d{3}-\\d{7,8}$")
+
+        // Check if the number matches the regular expression
+        return regex.matches(number)
     }
 
 }

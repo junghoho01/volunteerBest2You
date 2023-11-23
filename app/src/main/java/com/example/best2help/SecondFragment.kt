@@ -91,33 +91,35 @@ class SecondFragment : Fragment() {
                     if (verifyPasswordFormat(etPass.text.toString())){
 
                         if (etPass.text.toString() == etCpass.text.toString()){
+                            
+                            if (validNumber(etContact.text.toString())) {
 
-                            // To add data to Realtime Firebase
+                                // Call this function with the email and a callback function
+                                emailExists(etEmail.text.toString()) { emailExists ->
+                                    if (emailExists) {
+                                        // Email exists, handle the case here
+                                        DialogUtils.errorDialog(requireContext(), "Oops, email existed!")
+                                    } else {
+                                        // Email doesn't exist, you can proceed with your logic
+                                        // To add data to Realtime Firebase
+                                        val uid = generateUid()
+                                        var intent = Intent(context, ConfirmRegisterActivity::class.java)
+                                        intent.putExtra("EMAIL_KEY", etEmail.text.toString())
+                                        intent.putExtra("ADDRESS_KEY", etaddress.text.toString())
+                                        intent.putExtra("CONTACT_KEY", etContact.text.toString())
+                                        intent.putExtra("PASS_KEY", etPass.text.toString())
+                                        intent.putExtra("UID_KEY", uid)
+                                        intent.putExtra("USERNAME_KEY", etUsername.text.toString())
+                                        intent.putExtra("SKILLS_KEY", textViewSkillset.text.toString())
+                                        startActivity(intent)
+                                    }
+                                }
 
-//                        dbrefUser = FirebaseDatabase.getInstance().getReference("Volunteer")
-                            val uid = generateUid()
-//                        val reference = dbrefUser.child(uid)
-//                        val userData = mapOf(
-//                            "address" to etaddress.text.toString(),
-//                            "contact" to etContact.text.toString(),
-//                            "email" to etEmail.text.toString(),
-//                            "password" to etPass.text.toString(),
-//                            "uid" to uid,
-//                            "username" to etUsername.text.toString(),
-//                            "skills" to textViewSkillset.text.toString(),
-//                            "declineEvent" to "",
-//                        )
-//                        reference.setValue(userData)
 
-                            var intent = Intent(context, ConfirmRegisterActivity::class.java)
-                            intent.putExtra("EMAIL_KEY", etEmail.text.toString())
-                            intent.putExtra("ADDRESS_KEY", etaddress.text.toString())
-                            intent.putExtra("CONTACT_KEY", etContact.text.toString())
-                            intent.putExtra("PASS_KEY", etPass.text.toString())
-                            intent.putExtra("UID_KEY", uid)
-                            intent.putExtra("USERNAME_KEY", etUsername.text.toString())
-                            intent.putExtra("SKILLS_KEY", textViewSkillset.text.toString())
-                            startActivity(intent)
+
+                            } else {
+                                DialogUtils.errorDialog(requireContext(), "Oops, wrong number format!")
+                            }
 
                         } else {
                             DialogUtils.errorDialog(requireContext(), "Oops, password not match!")
@@ -134,12 +136,6 @@ class SecondFragment : Fragment() {
             } else {
                 DialogUtils.errorDialog(requireContext(), "Oops, it's not complete yet!")
             }
-
-//        DialogUtils.errorDialog(requireContext(), textViewSkillset.text.toString())
-//        DialogUtils.errorDialog(requireContext(), etUsername.text.toString())
-
-        //            var intent = Intent(context, ProfileActivity::class.java)
-        //            startActivity(intent)
         }
 
         return view
@@ -263,6 +259,30 @@ class SecondFragment : Fragment() {
         return "$timestamp-$randomPart"
     }
 
+    private fun validNumber(number: String): Boolean {
+        // Define the regular expression for valid phone numbers
+        val regex = Regex("^\\+60\\d{10}|^\\d{10,11}|^\\d{3}-\\d{7,8}$")
+
+        // Check if the number matches the regular expression
+        return regex.matches(number)
+    }
+
+    private fun emailExists(email: String, callback: (Boolean) -> Unit) {
+        // Try to find email
+        val dbref = FirebaseDatabase.getInstance().getReference("Volunteer")
+        val query = dbref.orderByChild("email").equalTo(email)
+
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                callback(snapshot.exists())
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle onCancelled if needed
+            }
+        })
+    }
+
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -282,4 +302,5 @@ class SecondFragment : Fragment() {
                 }
             }
     }
+
 }

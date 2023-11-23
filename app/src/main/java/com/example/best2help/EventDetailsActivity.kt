@@ -1,12 +1,10 @@
 package com.example.best2help
 
-import android.app.Dialog
 import android.content.ContentValues.TAG
 import android.location.Geocoder
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageView
 import com.example.best2help.databinding.ActivityEventDetailsBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -51,6 +49,13 @@ class EventDetailsActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.imgArrowBack.setOnClickListener {
             finish()
         }
+    }
+
+    private fun joinEvent(eventId: String) {
+        val sharedPref = getSharedPreferences("my_app_session", MODE_PRIVATE)
+        val userEmail = sharedPref.getString("user_email", null).toString()
+
+        DialogUtils.independentJoin(this, "Are you sure you wanna join?", eventId, userEmail)
     }
 
     override fun onMapReady(map: GoogleMap) {
@@ -169,6 +174,8 @@ class EventDetailsActivity : AppCompatActivity(), OnMapReadyCallback {
 
             Picasso.get().load(event.eventPicName).into(binding.imgEvent)
         }
+
+        binding.btnJoinEvent.setOnClickListener { joinEvent(event!!.eventId.toString()) }
     }
 
     private fun formatSkills(skillSet: String): String {

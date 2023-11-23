@@ -41,7 +41,6 @@ class HistoryActivity : AppCompatActivity() {
     }
 
     private fun getEventListDate() {
-
         val sharedPref = getSharedPreferences("my_app_session", Context.MODE_PRIVATE)
         val userEmail = sharedPref.getString("user_email", null).toString()
 
@@ -51,18 +50,22 @@ class HistoryActivity : AppCompatActivity() {
             dbref.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
+                        val unsortedList = ArrayList<JointEvent>()
+
                         for (eventSnapshot in snapshot.children) {
                             val event = eventSnapshot.getValue(JointEvent::class.java)
 
                             if (event!!.volunterEmail.toString() == userEmail) {
-                                eventArrayList.add(event!!)
+                                unsortedList.add(event)
                             }
-
                         }
-                    }
 
-                    var adapter = EventListJoinedAdapter(eventArrayList)
-                    eventRecyclerView.adapter = adapter
+                        // Reverse the order of the list
+                        val reversedList = unsortedList.reversed()
+
+                        var adapter = EventListJoinedAdapter(ArrayList(reversedList))
+                        eventRecyclerView.adapter = adapter
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -75,4 +78,5 @@ class HistoryActivity : AppCompatActivity() {
             Log.e(ContentValues.TAG, "Error fetching event data: ${e.message}", e)
         }
     }
+
 }

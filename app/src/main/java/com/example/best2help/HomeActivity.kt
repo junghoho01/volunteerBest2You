@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.best2help.databinding.ActivityHomeBinding
 import com.google.firebase.database.*
+import java.text.SimpleDateFormat
+import java.util.Date
 
 
 class HomeActivity : AppCompatActivity() {
@@ -88,96 +90,121 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun fetchRecentlyAddedEvent() {
-        try {
-            // Get data from event
-            dbref = FirebaseDatabase.getInstance().getReference("Event")
-            dbref.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        for (eventSnapshot in snapshot.children) {
-                            val event = eventSnapshot.getValue(Event::class.java)
 
-                            // Event status need to be approve
-                            if (event?.eventApproval == "Approve" && event.eventStatus == "Ongoing") {
-                                recentlyAddedeventArrayList.add(event!!)
+        val sharedPref = getSharedPreferences("my_app_session", Context.MODE_PRIVATE)
+        val userEmail = sharedPref.getString("user_email", null).toString()
+
+        DialogUtils.getDetails(userEmail) { volunteer ->
+            if (volunteer != null) {
+                // Volunteer found, do something with the details
+                var declineEventString = volunteer.declineEvent.toString()
+
+                try {
+                    // Get data from event
+                    dbref = FirebaseDatabase.getInstance().getReference("Event")
+                    dbref.addValueEventListener(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            if (snapshot.exists()) {
+                                for (eventSnapshot in snapshot.children) {
+                                    val event = eventSnapshot.getValue(Event::class.java)
+
+                                    // Event status need to be approve
+                                    if (event?.eventApproval == "Approve" && event.eventStatus == "Ongoing" && isStartDateValid(event?.eventStartDate)
+                                        && !(declineEventString.split(";").contains(event?.eventId.toString()))) {
+                                        recentlyAddedeventArrayList.add(event!!)
+                                    }
+                                }
+
+                                recentlyAddedeventArrayList.sortBy { it.eventStartDate }
+
+                                // For listener
+                                var adapter = EventAdapter(ArrayList(recentlyAddedeventArrayList.take(5)))
+                                // Show only the top 10 events
+                                recentlyAddedeventRecyclerView.adapter = adapter
+                                adapter.setOnItemClickListener(object : EventAdapter.onItemClickListener{
+                                    override fun onItemClick(position: Int) {
+                                        var id = recentlyAddedeventArrayList[position].eventId
+                                        var intent = Intent(this@HomeActivity, EventDetailsActivity::class.java)
+                                        intent.putExtra("EVENTID_KEY", id)
+                                        startActivity(intent)
+                                    }
+                                })
                             }
                         }
 
-                        recentlyAddedeventArrayList.sortBy { it.eventStartDate }
-
-                        // For listener
-                        var adapter = EventAdapter(ArrayList(recentlyAddedeventArrayList.take(5)))
-                        // Show only the top 10 events
-                        recentlyAddedeventRecyclerView.adapter = adapter
-                        adapter.setOnItemClickListener(object : EventAdapter.onItemClickListener{
-                            override fun onItemClick(position: Int) {
-                                var id = recentlyAddedeventArrayList[position].eventId
-                                var intent = Intent(this@HomeActivity, EventDetailsActivity::class.java)
-                                intent.putExtra("EVENTID_KEY", id)
-                                startActivity(intent)
-                            }
-                        })
-                    }
+                        override fun onCancelled(error: DatabaseError) {
+                            // Handle onCancelled error
+                            Log.e(TAG, "Firebase Database onCancelled: ${error.message}")
+                        }
+                    })
+                } catch (e: Exception) {
+                    // Handle other exceptions
+                    Log.e(TAG, "Error fetching event data: ${e.message}", e)
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-                    // Handle onCancelled error
-                    Log.e(TAG, "Firebase Database onCancelled: ${error.message}")
-                }
-            })
-        } catch (e: Exception) {
-            // Handle other exceptions
-            Log.e(TAG, "Error fetching event data: ${e.message}", e)
+            }
         }
     }
 
     private fun toEventListing() {
         var intent = Intent(this, EventListingActivity::class.java)
         startActivity(intent)
+        finish()
     }
 
     private fun getEventDate() {
-        try {
-            // Get data from event
-            dbref = FirebaseDatabase.getInstance().getReference("Event")
-            dbref.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        for (eventSnapshot in snapshot.children) {
-                            val event = eventSnapshot.getValue(Event::class.java)
 
-                            // Event status need to be approve
-                            if (event?.eventApproval == "Approve") {
-                                if (event?.eventStatus == "Ongoing") {
-                                    eventArrayList.add(event!!)
+        val sharedPref = getSharedPreferences("my_app_session", Context.MODE_PRIVATE)
+        val userEmail = sharedPref.getString("user_email", null).toString()
+
+        DialogUtils.getDetails(userEmail) { volunteer ->
+            if (volunteer != null) {
+                // Volunteer found, do something with the details
+                var declineEventString = volunteer.declineEvent.toString()
+
+                try {
+                    // Get data from event
+                    dbref = FirebaseDatabase.getInstance().getReference("Event")
+                    dbref.addValueEventListener(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            if (snapshot.exists()) {
+                                for (eventSnapshot in snapshot.children) {
+                                    val event = eventSnapshot.getValue(Event::class.java)
+
+                                    // Event status need to be approve
+                                    if (event?.eventApproval == "Approve" && event?.eventStatus == "Ongoing" && isStartDateValid(event?.eventStartDate)
+                                        && !(declineEventString.split(";").contains(event?.eventId.toString()))) {
+                                        eventArrayList.add(event!!)
+                                    }
                                 }
+
+                                // For listener
+                                var adapter = EventAdapter(ArrayList(eventArrayList.take(10)))
+                                // Show only the top 10 events
+                                eventRecyclerView.adapter = adapter
+                                adapter.setOnItemClickListener(object : EventAdapter.onItemClickListener{
+                                    override fun onItemClick(position: Int) {
+                                        var id = eventArrayList[position].eventId
+                                        var intent = Intent(this@HomeActivity, EventDetailsActivity::class.java)
+                                        intent.putExtra("EVENTID_KEY", id)
+                                        startActivity(intent)
+                                    }
+                                })
                             }
                         }
 
-                        // For listener
-                        var adapter = EventAdapter(ArrayList(eventArrayList.take(10)))
-                        // Show only the top 10 events
-                        eventRecyclerView.adapter = adapter
-                        adapter.setOnItemClickListener(object : EventAdapter.onItemClickListener{
-                            override fun onItemClick(position: Int) {
-                                var id = eventArrayList[position].eventId
-                                var intent = Intent(this@HomeActivity, EventDetailsActivity::class.java)
-                                intent.putExtra("EVENTID_KEY", id)
-                                startActivity(intent)
-                            }
-                        })
-                    }
+                        override fun onCancelled(error: DatabaseError) {
+                            // Handle onCancelled error
+                            Log.e(TAG, "Firebase Database onCancelled: ${error.message}")
+                        }
+                    })
+                } catch (e: Exception) {
+                    // Handle other exceptions
+                    Log.e(TAG, "Error fetching event data: ${e.message}", e)
                 }
 
-                override fun onCancelled(error: DatabaseError) {
-                    // Handle onCancelled error
-                    Log.e(TAG, "Firebase Database onCancelled: ${error.message}")
-                }
-            })
-        } catch (e: Exception) {
-            // Handle other exceptions
-            Log.e(TAG, "Error fetching event data: ${e.message}", e)
+            }
         }
+
     }
 
     private var doubleBackToExitPressedOnce = false
@@ -193,5 +220,13 @@ class HomeActivity : AppCompatActivity() {
                 doubleBackToExitPressedOnce = false
             }, 2000) // Reset the flag after 2 seconds
         }
+    }
+
+    private fun isStartDateValid(startDate: String?): Boolean {
+        val sdf = SimpleDateFormat("yyyy-MM-dd")
+        val currentDate = sdf.format(Date())
+
+        // Check if the start date is greater than or equal to today
+        return startDate?.compareTo(currentDate) ?: -1 >= 0
     }
 }

@@ -6,11 +6,15 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.best2help.databinding.ActivityEventListingBinding
 import com.google.firebase.database.*
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class EventListingActivity : AppCompatActivity() {
 
@@ -33,6 +37,8 @@ class EventListingActivity : AppCompatActivity() {
         getEventListDate()
 
         binding.imgArrowBack.setOnClickListener {
+            var intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
             finish()
         }
 
@@ -177,7 +183,7 @@ class EventListingActivity : AppCompatActivity() {
 
                                     // Event status need to be approve
                                     if (event?.eventApproval == "Approve" && event?.eventStatus == "Ongoing"
-                                        && !(declineEventString.split(";").contains(event?.eventId.toString()))) {
+                                        && !(declineEventString.split(";").contains(event?.eventId.toString())) && isStartDateValid(event?.eventStartDate.toString())) {
                                             eventArrayList.add(event!!)
                                     }
                                 }
@@ -212,5 +218,20 @@ class EventListingActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    private fun isStartDateValid(startDate: String?): Boolean {
+        val sdf = SimpleDateFormat("yyyy-MM-dd")
+        val currentDate = sdf.format(Date())
+
+        // Check if the start date is greater than or equal to today
+        return startDate?.compareTo(currentDate) ?: -1 >= 0
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        var intent = Intent(this, HomeActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }
