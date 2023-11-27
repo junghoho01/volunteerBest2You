@@ -55,8 +55,8 @@ class FirstFragment : Fragment() {
 
         // Declare all the inputs
         btnLogin = view!!.findViewById(R.id.btn_login)
-        etEmail = view.findViewById(R.id.et_email)
-        etPassword= view.findViewById(R.id.et_password)
+        etEmail = view!!.findViewById(R.id.et_email)
+        etPassword= view!!.findViewById(R.id.et_password)
 
         view.findViewById<TextView>(R.id.tv_forgotPassword).setOnClickListener {
             // Start the new activity here
@@ -88,8 +88,17 @@ class FirstFragment : Fragment() {
                                     editor.putString("user_email", etEmail.text.toString())
                                     editor.apply()
 
-                                    val intent = Intent(activity, HomeActivity::class.java)
-                                    startActivity(intent)
+                                    if (etEmail.text.toString() == "admin@gmail.com" && etPassword.text.toString() == "1"){
+
+                                        val intent = Intent(activity, AdminActivity::class.java)
+                                        startActivity(intent)
+
+                                    } else {
+
+                                        val intent = Intent(activity, HomeActivity::class.java)
+                                        startActivity(intent)
+
+                                    }
                                 } else {
                                     // Password doesn't match, show an error message
                                     DialogUtils.errorDialog(requireContext(), "Oops, Invalid credential!")

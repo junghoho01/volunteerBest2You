@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AdminActivity">
+
+    <ImageView
+        android:id="@+id/img_logo"
+        android:layout_width="230dp"
+        android:layout_height="230dp"
+        android:src="@drawable/logo"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"/>
+
+    <Button
+        android:id="@+id/btn_volunteer"
+        android:layout_below="@id/img_logo"
+        android:layout_width="310dp"
+        android:layout_height="80dp"
+        android:text="Volunteer List"
+        android:layout_marginTop="35dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:backgroundTint="#00BBC4"
+        android:textColor="#064D5A"/>
+
+    <Button
+        android:id="@+id/btn_Report"
+        android:layout_below="@id/btn_volunteer"
+        android:layout_width="310dp"
+        android:layout_height="80dp"
+        android:text="Report"
+        android:layout_marginTop="25dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:backgroundTint="#00BBC4"
+        android:textColor="#064D5A"/>
+
+</RelativeLayout>

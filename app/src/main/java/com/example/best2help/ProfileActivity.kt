@@ -48,6 +48,7 @@ class ProfileActivity : AppCompatActivity() {
                 binding.etContactNumber.setText(volunteer.contact.toString())
                 binding.etAddressInfo.setText(volunteer.address.toString())
                 binding.dropdownSkillset.text = volunteer.skills.toString()
+                binding.etPassword.setText(volunteer.password.toString())
                 dropdownFunction(volunteer.skills.toString())
             } else {
                 // Volunteer not found

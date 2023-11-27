@@ -51,12 +51,12 @@ class HomeActivity : AppCompatActivity() {
 
         // Check existing Email
 
-//        DialogUtils.getForgotPassByEmail(userEmail) { forgotPass ->
-//            if (forgotPass == "1") {
-//                // Use the retrieved forgotPass value
-//                DialogUtils.changePassword(this, "New Password !", userEmail)
-//            }
-//        }
+        DialogUtils.getForgotPassByEmail(userEmail) { forgotPass ->
+            if (forgotPass == "1") {
+                // Use the retrieved forgotPass value
+                DialogUtils.changePassword(this, "New Password !", userEmail)
+            }
+        }
 
 
 

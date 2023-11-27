@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.Window
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -430,6 +431,111 @@ object DialogUtils {
                 errorDialog(context, "Databaser Error...")
             }
         }
-
     }
+
+    fun getForgotPassByEmail(email: String, callback: (String?) -> Unit) {
+        val dbref = FirebaseDatabase.getInstance().getReference("Volunteer")
+        val query = dbref.orderByChild("email").equalTo(email)
+
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    // Iterate through the results (although there should be only one)
+                    for (volunteerSnapshot in snapshot.children) {
+                        val volunteer = volunteerSnapshot.getValue(Volunteer::class.java)
+                        callback(volunteer?.forgotPass)
+                        return  // Assuming you want to stop after the first match
+                    }
+                }
+                // If no match is found
+                callback(null)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle onCancelled if needed
+                callback(null)
+            }
+        })
+    }
+
+    fun changePassword(context: Context, title: String, email: String) {
+
+        //Dismiss the previous dialog if it exists
+        previousDialog?.dismiss()
+
+        val dialog = Dialog(context)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setContentView(R.layout.custom_forgotpass)
+        val text = dialog.findViewById<TextView>(R.id.tv_title)
+        val pass = dialog.findViewById<EditText>(R.id.et_password)
+        text.text = title
+        val btnClose = dialog.findViewById<Button>(R.id.btnDeniedClose)
+        btnClose.setOnClickListener {
+
+            // validate password
+            if (verifyPasswordFormat(pass.text.toString())){
+
+                getDetails(email) { volunteer ->
+                    if (volunteer != null) {
+
+                        val volunteerPass = mapOf(
+                            "password" to pass.text.toString(),
+                            "forgotPass" to "0"
+                        )
+
+                        val dbrefUser = FirebaseDatabase.getInstance().getReference("Volunteer").child(volunteer.uid.toString())
+
+                        dbrefUser.updateChildren(volunteerPass)
+                            .addOnSuccessListener {
+                                succsessDialog(context, "New Password Updated!")
+                            }
+                            .addOnFailureListener {
+                                errorDialog(context, "Oops, Fail to update...")
+                            }
+
+                    } else {
+                        // Volunteer not found
+                        errorDialog(context, "Databaser Error...")
+                    }
+                }
+
+            } else {
+
+                val dialog = Dialog(context)
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+                dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                dialog.setContentView(R.layout.custom_denied)
+                val text = dialog.findViewById<TextView>(R.id.tv_title)
+                text.text = "Please provided a proper password!"
+                val btnClose = dialog.findViewById<Button>(R.id.btnDeniedClose)
+
+                btnClose.setOnClickListener {
+                    dialog.dismiss()
+                }
+
+                // Set canceledOnTouchOutside to false
+                dialog.setCanceledOnTouchOutside(false)
+
+                dialog.show()
+            }
+        }
+
+        // Set the current dialog as the previous dialog
+        previousDialog = dialog
+
+        // Set canceledOnTouchOutside to false
+        dialog.setCanceledOnTouchOutside(false)
+
+        dialog.show()
+    }
+
+    private fun verifyPasswordFormat(password: String): Boolean {
+        // Define a regular expression for password validation
+        val passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@\$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,}\$"
+
+        // Match the password against the regex
+        return password.matches(passwordRegex.toRegex())
+    }
+
 }
