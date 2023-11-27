@@ -36,8 +36,8 @@ class HomeActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        val sharedPref = getSharedPreferences("my_app_session", Context.MODE_PRIVATE)
-//        val userEmail = sharedPref.getString("user_email", null).toString()
+        val sharedPref = getSharedPreferences("my_app_session", Context.MODE_PRIVATE)
+        val userEmail = sharedPref.getString("user_email", null).toString()
 //
 //        DialogUtils.getDetails(userEmail) { volunteer ->
 //            if (volunteer != null) {
@@ -48,6 +48,17 @@ class HomeActivity : AppCompatActivity() {
 //                DialogUtils.errorDialog(this, "Problem...")
 //            }
 //        }
+
+        // Check existing Email
+
+//        DialogUtils.getForgotPassByEmail(userEmail) { forgotPass ->
+//            if (forgotPass == "1") {
+//                // Use the retrieved forgotPass value
+//                DialogUtils.changePassword(this, "New Password !", userEmail)
+//            }
+//        }
+
+
 
         // Get value
         val intent = intent
@@ -228,5 +239,13 @@ class HomeActivity : AppCompatActivity() {
 
         // Check if the start date is greater than or equal to today
         return startDate?.compareTo(currentDate) ?: -1 >= 0
+    }
+
+    private fun verifyPasswordFormat(password: String): Boolean {
+        // Define a regular expression for password validation
+        val passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@\$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,}\$"
+
+        // Match the password against the regex
+        return password.matches(passwordRegex.toRegex())
     }
 }

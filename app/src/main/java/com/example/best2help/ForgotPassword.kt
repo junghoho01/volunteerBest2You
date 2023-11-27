@@ -55,7 +55,8 @@ class ForgotPassword : AppCompatActivity() {
             if (volunteer != null) {
 
                 val volunteerPass = mapOf(
-                    "password" to pass
+                    "password" to pass,
+                    "forgotPass" to "1"
                 )
 
                 val dbrefUser = FirebaseDatabase.getInstance().getReference("Volunteer").child(volunteer.uid.toString())

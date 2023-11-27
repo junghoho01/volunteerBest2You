@@ -67,8 +67,31 @@
                 android:layout_marginRight="40dp"/>
 
             <TextView
-                android:id="@+id/tv_email"
+                android:id="@+id/tv_password"
                 android:layout_below="@id/et_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Password"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_marginTop="20dp"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/et_password"
+                android:layout_below="@id/tv_password"
+                android:layout_width="300dp"
+                android:layout_height="48dp"
+                android:inputType="textPassword"
+                android:ems="10"
+                android:hint="Abcd123#"
+                android:layout_marginLeft="36dp"
+                android:layout_marginRight="40dp"/>
+
+            <TextView
+                android:id="@+id/tv_email"
+                android:layout_below="@id/et_password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Email Address"

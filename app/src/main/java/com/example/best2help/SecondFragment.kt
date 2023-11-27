@@ -88,45 +88,41 @@ class SecondFragment : Fragment() {
 
                 if (isEmailValid(etEmail.text.toString())){
 
-                    if (verifyPasswordFormat(etPass.text.toString())){
+                    emailExists { emailExists ->
 
-                        if (etPass.text.toString() == etCpass.text.toString()){
-                            
-                            if (validNumber(etContact.text.toString())) {
+                        if (!emailExists) {
+                            // Email not exists, handle accordingly
 
-                                // Call this function with the email and a callback function
-                                emailExists(etEmail.text.toString()) { emailExists ->
-                                    if (emailExists) {
-                                        // Email exists, handle the case here
-                                        DialogUtils.errorDialog(requireContext(), "Oops, email existed!")
-                                    } else {
-                                        // Email doesn't exist, you can proceed with your logic
-                                        // To add data to Realtime Firebase
-                                        val uid = generateUid()
-                                        var intent = Intent(context, ConfirmRegisterActivity::class.java)
-                                        intent.putExtra("EMAIL_KEY", etEmail.text.toString())
-                                        intent.putExtra("ADDRESS_KEY", etaddress.text.toString())
-                                        intent.putExtra("CONTACT_KEY", etContact.text.toString())
-                                        intent.putExtra("PASS_KEY", etPass.text.toString())
-                                        intent.putExtra("UID_KEY", uid)
-                                        intent.putExtra("USERNAME_KEY", etUsername.text.toString())
-                                        intent.putExtra("SKILLS_KEY", textViewSkillset.text.toString())
-                                        startActivity(intent)
-                                    }
+                            if (verifyPasswordFormat(etPass.text.toString())){
+
+                                if (etPass.text.toString() == etCpass.text.toString()){
+
+                                    // To add data to Realtime Firebase
+
+                                    val uid = generateUid()
+
+                                    var intent = Intent(context, ConfirmRegisterActivity::class.java)
+                                    intent.putExtra("EMAIL_KEY", etEmail.text.toString())
+                                    intent.putExtra("ADDRESS_KEY", etaddress.text.toString())
+                                    intent.putExtra("CONTACT_KEY", etContact.text.toString())
+                                    intent.putExtra("PASS_KEY", etPass.text.toString())
+                                    intent.putExtra("UID_KEY", uid)
+                                    intent.putExtra("USERNAME_KEY", etUsername.text.toString())
+                                    intent.putExtra("SKILLS_KEY", textViewSkillset.text.toString())
+                                    startActivity(intent)
+
+                                } else {
+                                    DialogUtils.errorDialog(requireContext(), "Oops, password not match!")
                                 }
 
-
-
                             } else {
-                                DialogUtils.errorDialog(requireContext(), "Oops, wrong number format!")
+                                DialogUtils.errorDialog(requireContext(), "Oops, Allow only alphabet characters, digits, and the specified symbols, and the password must be at least 8 characters long.")
                             }
 
                         } else {
-                            DialogUtils.errorDialog(requireContext(), "Oops, password not match!")
+                            // Email does not exist, handle accordingly
+                            DialogUtils.errorDialog(requireContext(), "Oops, email existed!")
                         }
-
-                    } else {
-                        DialogUtils.errorDialog(requireContext(), "Oops, Allow only alphabet characters, digits, and the specified symbols, and the password must be at least 8 characters long.")
                     }
 
                 } else {
@@ -136,6 +132,12 @@ class SecondFragment : Fragment() {
             } else {
                 DialogUtils.errorDialog(requireContext(), "Oops, it's not complete yet!")
             }
+
+//        DialogUtils.errorDialog(requireContext(), textViewSkillset.text.toString())
+//        DialogUtils.errorDialog(requireContext(), etUsername.text.toString())
+
+        //            var intent = Intent(context, ProfileActivity::class.java)
+        //            startActivity(intent)
         }
 
         return view
@@ -301,6 +303,24 @@ class SecondFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    private fun emailExists(callback: (Boolean) -> Unit) {
+        // Try to find email
+        etEmail = view!!.findViewById(R.id.et_email)
+
+        val dbref = FirebaseDatabase.getInstance().getReference("Volunteer")
+        val query = dbref.orderByChild("email").equalTo(etEmail.text.toString())
+
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                callback(snapshot.exists())
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle onCancelled if needed
+            }
+        })
     }
 
 }

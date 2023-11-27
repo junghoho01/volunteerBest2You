@@ -9,4 +9,5 @@ data class Volunteer(
     val skills: String? = null,
     val uid: String? = null,
     val username: String? = null,
+    val forgotPass: String? = null,
 )

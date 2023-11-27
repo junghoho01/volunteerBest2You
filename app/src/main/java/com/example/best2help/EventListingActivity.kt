@@ -137,9 +137,6 @@ class EventListingActivity : AppCompatActivity() {
                 bestMatchEvent = eventArrayList[i]
                 maxMatchingSkills = matchingSkills
             }
-
-            // I will also need to check if
-
         }
 
         // Get the uid

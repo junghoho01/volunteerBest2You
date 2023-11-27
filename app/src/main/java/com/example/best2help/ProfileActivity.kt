@@ -66,20 +66,24 @@ class ProfileActivity : AppCompatActivity() {
         var contactNo = binding.etContactNumber.text.toString()
         var address =  binding.etAddressInfo.text.toString()
         var skillset = binding.dropdownSkillset.text.toString()
+        var password = binding.etPassword.text.toString()
 
         val sharedPref = getSharedPreferences("my_app_session", Context.MODE_PRIVATE)
         val userEmail = sharedPref.getString("user_email", null).toString()
 
         DialogUtils.getDetails(userEmail) { volunteer ->
             if (volunteer != null) {
-                if (username.isNotEmpty() && contactNo.isNotEmpty() && address.isNotEmpty() && skillset.isNotEmpty()){
+
+                if (username.isNotEmpty() && contactNo.isNotEmpty() && address.isNotEmpty() && skillset.isNotEmpty() && password.isNotEmpty()
+                    && verifyPasswordFormat(password)){
 
                     if(validNumber(contactNo)){
                         val volunteerMap = mapOf(
                             "username" to username,
                             "contact" to contactNo,
                             "address" to address,
-                            "skills" to skillset
+                            "skills" to skillset,
+                            "password" to password
                         )
 
                         val dbrefUser = FirebaseDatabase.getInstance().getReference("Volunteer").child(volunteer.uid.toString())
@@ -176,7 +180,6 @@ class ProfileActivity : AppCompatActivity() {
                 // Clear the text in the textViewSkillset
                 textViewSkillset.text = ""
             }
-
             // show dialog
             builder.show()
         }
@@ -233,6 +236,14 @@ class ProfileActivity : AppCompatActivity() {
 
         // Check if the number matches the regular expression
         return regex.matches(number)
+    }
+
+    private fun verifyPasswordFormat(password: String): Boolean {
+        // Define a regular expression for password validation
+        val passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@\$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,}\$"
+
+        // Match the password against the regex
+        return password.matches(passwordRegex.toRegex())
     }
 
 }
