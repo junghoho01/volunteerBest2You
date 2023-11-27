@@ -97,19 +97,24 @@ class SecondFragment : Fragment() {
 
                                 if (etPass.text.toString() == etCpass.text.toString()){
 
-                                    // To add data to Realtime Firebase
+                                    if (validNumber(etPass.text.toString())){
+                                        // To add data to Realtime Firebase
 
-                                    val uid = generateUid()
+                                        val uid = generateUid()
 
-                                    var intent = Intent(context, ConfirmRegisterActivity::class.java)
-                                    intent.putExtra("EMAIL_KEY", etEmail.text.toString())
-                                    intent.putExtra("ADDRESS_KEY", etaddress.text.toString())
-                                    intent.putExtra("CONTACT_KEY", etContact.text.toString())
-                                    intent.putExtra("PASS_KEY", etPass.text.toString())
-                                    intent.putExtra("UID_KEY", uid)
-                                    intent.putExtra("USERNAME_KEY", etUsername.text.toString())
-                                    intent.putExtra("SKILLS_KEY", textViewSkillset.text.toString())
-                                    startActivity(intent)
+                                        var intent = Intent(context, ConfirmRegisterActivity::class.java)
+                                        intent.putExtra("EMAIL_KEY", etEmail.text.toString())
+                                        intent.putExtra("ADDRESS_KEY", etaddress.text.toString())
+                                        intent.putExtra("CONTACT_KEY", etContact.text.toString())
+                                        intent.putExtra("PASS_KEY", etPass.text.toString())
+                                        intent.putExtra("UID_KEY", uid)
+                                        intent.putExtra("USERNAME_KEY", etUsername.text.toString())
+                                        intent.putExtra("SKILLS_KEY", textViewSkillset.text.toString())
+                                        startActivity(intent)
+                                    } else {
+                                        DialogUtils.errorDialog(requireContext(), "Oops, contact number format!")
+
+                                    }
 
                                 } else {
                                     DialogUtils.errorDialog(requireContext(), "Oops, password not match!")
@@ -261,14 +266,6 @@ class SecondFragment : Fragment() {
         return "$timestamp-$randomPart"
     }
 
-    private fun validNumber(number: String): Boolean {
-        // Define the regular expression for valid phone numbers
-        val regex = Regex("^\\+60\\d{10}|^\\d{10,11}|^\\d{3}-\\d{7,8}$")
-
-        // Check if the number matches the regular expression
-        return regex.matches(number)
-    }
-
     private fun emailExists(email: String, callback: (Boolean) -> Unit) {
         // Try to find email
         val dbref = FirebaseDatabase.getInstance().getReference("Volunteer")
@@ -322,5 +319,14 @@ class SecondFragment : Fragment() {
             }
         })
     }
+
+    private fun validNumber(number: String): Boolean {
+        // Define the regular expression for valid phone numbers
+        val regex = Regex("^\\+60\\d{10}|^\\d{10,11}|^\\d{3}-\\d{7,8}$")
+
+        // Check if the number matches the regular expression
+        return regex.matches(number)
+    }
+
 
 }

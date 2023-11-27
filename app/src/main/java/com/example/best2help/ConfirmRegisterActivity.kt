@@ -73,7 +73,7 @@ class ConfirmRegisterActivity : AppCompatActivity() {
                     "username" to username,
                     "skills" to skills,
                     "declineEvent" to "",
-                    "forgotPass" to "1",
+                    "forgotPass" to "0",
                 )
                 reference.setValue(userData)
 

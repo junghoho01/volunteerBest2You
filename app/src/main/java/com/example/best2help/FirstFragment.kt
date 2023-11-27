@@ -88,7 +88,7 @@ class FirstFragment : Fragment() {
                                     editor.putString("user_email", etEmail.text.toString())
                                     editor.apply()
 
-                                    if (etEmail.text.toString() == "admin@gmail.com" && etPassword.text.toString() == "1"){
+                                    if (etEmail.text.toString() == "admin@gmail.com" && etPassword.text.toString() == "admin@1234"){
 
                                         val intent = Intent(activity, AdminActivity::class.java)
                                         startActivity(intent)

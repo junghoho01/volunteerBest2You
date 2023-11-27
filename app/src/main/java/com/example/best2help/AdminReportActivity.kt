@@ -52,6 +52,7 @@ class AdminReportActivity : AppCompatActivity() {
         val volunteerCount: Int
     )
 
+    // Get from realtime database
     private fun fetchVolunteerCounts() {
         val eventsRef = FirebaseDatabase.getInstance().getReference("JointEvent")
 
@@ -85,6 +86,7 @@ class AdminReportActivity : AppCompatActivity() {
         })
     }
 
+    // Update the data to chart
     private fun updateBarChart(eventDetailsList: List<EventDetails>) {
         // Example data for the chart
         val entries = eventDetailsList.mapIndexed { index, eventDetails ->
