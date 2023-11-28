@@ -97,7 +97,7 @@ class SecondFragment : Fragment() {
 
                                 if (etPass.text.toString() == etCpass.text.toString()){
 
-                                    if (validNumber(etPass.text.toString())){
+                                    if (validNumber(etContact.text.toString())){
                                         // To add data to Realtime Firebase
 
                                         val uid = generateUid()
@@ -111,6 +111,7 @@ class SecondFragment : Fragment() {
                                         intent.putExtra("USERNAME_KEY", etUsername.text.toString())
                                         intent.putExtra("SKILLS_KEY", textViewSkillset.text.toString())
                                         startActivity(intent)
+
                                     } else {
                                         DialogUtils.errorDialog(requireContext(), "Oops, contact number format!")
 

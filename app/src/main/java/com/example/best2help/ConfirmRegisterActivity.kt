@@ -1,5 +1,6 @@
 package com.example.best2help
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -60,6 +61,12 @@ class ConfirmRegisterActivity : AppCompatActivity() {
 
             // Check if the code same with the generated code
             if(code == receiveCode){
+
+                val sharedPref = getSharedPreferences("my_app_session", Context.MODE_PRIVATE)
+                val editor = sharedPref.edit()
+
+                editor.putString("user_email", email)
+                editor.apply()
 
                 // Add the data to DB
                 dbrefUser = FirebaseDatabase.getInstance().getReference("Volunteer")
