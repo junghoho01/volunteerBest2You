@@ -11,4 +11,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <Button
+        android:id="@+id/exportToPdfButton"
+        android:layout_width="310dp"
+        android:layout_height="wrap_content"
+        android:text="EXPORT PDF"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:backgroundTint="#00BBC4"/>
+
 </RelativeLayout>
