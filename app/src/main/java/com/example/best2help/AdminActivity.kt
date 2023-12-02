@@ -18,6 +18,15 @@ class AdminActivity : AppCompatActivity() {
         binding.btnReport.setOnClickListener {
             toReport()
         }
+
+        binding.btnVolunteer.setOnClickListener {
+            toVolunteer()
+        }
+    }
+
+    private fun toVolunteer() {
+        var intent = Intent(this, AdminVolunteerActivity::class.java)
+        startActivity(intent)
     }
 
     private fun toReport() {
