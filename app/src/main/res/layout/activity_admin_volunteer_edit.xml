@@ -200,6 +200,18 @@
                 android:layout_marginRight="40dp"
                 android:backgroundTint="#00BBC4"/>
 
+            <Button
+                android:id="@+id/btn_delete"
+                android:layout_below="@id/dropdown_skillset"
+                android:layout_width="310dp"
+                android:layout_height="wrap_content"
+                android:text="Delete Volunteer"
+                android:layout_marginTop="15dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:backgroundTint="#FF7F7F"/>
+
         </LinearLayout>
 
     </ScrollView>

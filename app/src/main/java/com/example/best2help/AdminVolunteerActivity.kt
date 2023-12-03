@@ -24,6 +24,14 @@ class AdminVolunteerActivity : AppCompatActivity() {
         binding = ActivityAdminVolunteerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val intent = intent
+        var flag = intent.getStringExtra("FLAG") // For string data
+
+        if (flag == "1"){
+            DialogUtils.succsessDialog(this, "Delete Successfully !")
+            flag = ""
+        }
+
         // Recycler View
         volunteerRecyclerView = findViewById(R.id.volunteerListRecyclerView)
         volunteerRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -33,7 +41,7 @@ class AdminVolunteerActivity : AppCompatActivity() {
         getVolunteerList()
 
         binding.imgArrowBack.setOnClickListener {
-            var intent = Intent(this, AdminVolunteerActivity::class.java)
+            var intent = Intent(this, AdminActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -64,6 +72,7 @@ class AdminVolunteerActivity : AppCompatActivity() {
                             intent.putExtra("VOLUNTEER_EMAIL", email)
                             intent.putExtra("VOLUNTEER_UID", uid)
                             startActivity(intent)
+                            finish()
                         }
                     })
                 }

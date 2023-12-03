@@ -2,6 +2,7 @@ package com.example.best2help
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
@@ -38,6 +39,30 @@ class AdminVolunteerEditActivity : AppCompatActivity() {
 
         binding.btnSave.setOnClickListener{
             updateData(email, uid)
+        }
+        
+        binding.btnDelete.setOnClickListener {
+            deleteData(uid)
+        }
+    }
+
+    private fun deleteData(uid: String?) {
+        if (uid != null) {
+            val dbrefUser = FirebaseDatabase.getInstance().getReference("Volunteer").child(uid)
+
+            dbrefUser.removeValue()
+                .addOnSuccessListener {
+//                    DialogUtils.succsessDialog(this, "Delete Succesfully!")
+                    var intent = Intent(this, AdminVolunteerActivity::class.java)
+                    intent.putExtra("FLAG", "1")
+                    startActivity(intent)
+                    finish()
+                }
+                .addOnFailureListener {
+                    DialogUtils.errorDialog(this, "Oops, Fail to delete...")
+                }
+        } else {
+            DialogUtils.errorDialog(this, "Oops, Invalid user ID!")
         }
     }
 

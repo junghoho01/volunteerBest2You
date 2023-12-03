@@ -19,13 +19,14 @@ class VolunteerListAdapter (private val volunteerList : ArrayList<Volunteer>) : 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VolunteerListAdapter.MyViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.event_cardlist,parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.volunteer_cardlist,parent, false)
         return MyViewHolder(itemView, mListener)
     }
 
     override fun onBindViewHolder(holder: VolunteerListAdapter.MyViewHolder, position: Int) {
         val volunteerName : Volunteer = volunteerList[position]
         holder.title.text = volunteerName.username
+        holder.number.text = (position + 1).toString() + "."
     }
 
     override fun getItemCount(): Int {
@@ -34,6 +35,7 @@ class VolunteerListAdapter (private val volunteerList : ArrayList<Volunteer>) : 
 
     class MyViewHolder(itemView : View, listener: onItemClickListener) : RecyclerView.ViewHolder(itemView){
         val title : TextView = itemView.findViewById(R.id.tv_eventTitle)
+        val number : TextView = itemView.findViewById(R.id.tv_numbering)
 
         init {
             itemView.setOnClickListener {

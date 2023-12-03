@@ -537,5 +537,4 @@ object DialogUtils {
         // Match the password against the regex
         return password.matches(passwordRegex.toRegex())
     }
-
 }
