@@ -6,16 +6,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
-import com.example.best2help.databinding.ActivityProfileBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.example.best2help.databinding.ActivityAdminVolunteerEditBinding
+import com.google.firebase.database.*
 
-class ProfileActivity : AppCompatActivity() {
+class AdminVolunteerEditActivity : AppCompatActivity() {
 
-    private lateinit var binding : ActivityProfileBinding
+    private lateinit var binding : ActivityAdminVolunteerEditBinding
+    private lateinit var dbref : DatabaseReference
 
     // Initialize variables for dropdown
     private lateinit var textViewSkillset: TextView
@@ -23,45 +20,28 @@ class ProfileActivity : AppCompatActivity() {
     private val skillList = ArrayList<Int>()
     private var skillArray = emptyArray<String>()
 
-    // Intialize variable for database
-    private lateinit var dbref : DatabaseReference
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityProfileBinding.inflate(layoutInflater)
+        binding = ActivityAdminVolunteerEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        fetchSkills()
 
         binding.imgArrowBack.setOnClickListener {
             finish()
         }
 
-        val sharedPref = getSharedPreferences("my_app_session", Context.MODE_PRIVATE)
-        val userEmail = sharedPref.getString("user_email", null).toString()
+        val intent = intent
+        val email = intent.getStringExtra("VOLUNTEER_EMAIL") // For string data
+        val uid = intent.getStringExtra("VOLUNTEER_UID") // For string data
 
-        DialogUtils.getDetails(userEmail) { volunteer ->
-            if (volunteer != null) {
-                // Volunteer found, do something with the details
-                binding.etUsername.setText(volunteer.username.toString())
-                binding.etEmail.setText(volunteer.email.toString())
-                binding.etContactNumber.setText(volunteer.contact.toString())
-                binding.etAddressInfo.setText(volunteer.address.toString())
-                binding.dropdownSkillset.text = volunteer.skills.toString()
-                binding.etPassword.setText(volunteer.password.toString())
-                dropdownFunction(volunteer.skills.toString())
-            } else {
-                // Volunteer not found
-                DialogUtils.errorDialog(this, "Database Error...")
-            }
-        }
+        fetchSkills(email)
+        populateVolunteerForm(email)
 
         binding.btnSave.setOnClickListener{
-            updateData()
+            updateData(email, uid)
         }
     }
 
-    private fun updateData() {
+    private fun updateData(email: String?, uid: String?) {
         // Validate everything first
         var username = binding.etUsername.text.toString()
         var contactNo = binding.etContactNumber.text.toString()
@@ -69,44 +49,52 @@ class ProfileActivity : AppCompatActivity() {
         var skillset = binding.dropdownSkillset.text.toString()
         var password = binding.etPassword.text.toString()
 
-        val sharedPref = getSharedPreferences("my_app_session", Context.MODE_PRIVATE)
-        val userEmail = sharedPref.getString("user_email", null).toString()
+        if (username.isNotEmpty() && contactNo.isNotEmpty() && address.isNotEmpty() && skillset.isNotEmpty() && password.isNotEmpty()
+            && verifyPasswordFormat(password)){
 
-        DialogUtils.getDetails(userEmail) { volunteer ->
+            if(validNumber(contactNo)){
+                val volunteerMap = mapOf(
+                    "username" to username,
+                    "contact" to contactNo,
+                    "address" to address,
+                    "skills" to skillset,
+                    "password" to password
+                )
+
+                val dbrefUser = FirebaseDatabase.getInstance().getReference("Volunteer").child(uid!!)
+
+                dbrefUser.updateChildren(volunteerMap)
+                    .addOnSuccessListener {
+                        DialogUtils.succsessDialog(this, "Update Succesfully!")
+                    }
+                    .addOnFailureListener {
+                        DialogUtils.errorDialog(this, "Oops, Fail to update...")
+                    }
+            } else {
+                DialogUtils.errorDialog(this, "Oops, wrong number format!")
+
+            }
+
+        } else {
+            DialogUtils.errorDialog(this, "Oops, it's not complete yet!")
+        }
+    }
+
+    private fun populateVolunteerForm(email: String?) {
+        DialogUtils.getDetails(email!!) { volunteer ->
             if (volunteer != null) {
 
-                if (username.isNotEmpty() && contactNo.isNotEmpty() && address.isNotEmpty() && skillset.isNotEmpty() && password.isNotEmpty()
-                    && verifyPasswordFormat(password)){
+                binding.etUsername.setText(volunteer.username.toString())
+                binding.etEmail.setText(volunteer.email.toString())
+                binding.etContactNumber.setText(volunteer.contact.toString())
+                binding.etAddressInfo.setText(volunteer.address.toString())
+                binding.dropdownSkillset.text = volunteer.skills.toString()
+                binding.etPassword.setText(volunteer.password.toString())
+                dropdownFunction(volunteer.skills.toString())
 
-                    if(validNumber(contactNo)){
-                        val volunteerMap = mapOf(
-                            "username" to username,
-                            "contact" to contactNo,
-                            "address" to address,
-                            "skills" to skillset,
-                            "password" to password
-                        )
-
-                        val dbrefUser = FirebaseDatabase.getInstance().getReference("Volunteer").child(volunteer.uid.toString())
-
-                        dbrefUser.updateChildren(volunteerMap)
-                            .addOnSuccessListener {
-                                DialogUtils.succsessDialog(this, "Update Succesfully!")
-                            }
-                            .addOnFailureListener {
-                                DialogUtils.errorDialog(this, "Oops, Fail to update...")
-                            }
-                    } else {
-                        DialogUtils.errorDialog(this, "Oops, wrong number format!")
-
-                    }
-
-                } else {
-                    DialogUtils.errorDialog(this, "Oops, it's not complete yet!")
-                }
             } else {
                 // Volunteer not found
-                DialogUtils.errorDialog(this, "Databaser Error...")
+                DialogUtils.errorDialog(this, "Database Error...")
             }
         }
     }
@@ -186,10 +174,7 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-
-
-
-    private fun fetchSkills() {
+    private fun fetchSkills(email: String?) {
         dbref = FirebaseDatabase.getInstance().getReference("Skillset")
         dbref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -206,12 +191,9 @@ class ProfileActivity : AppCompatActivity() {
                     }
                 }
 
-                val sharedPref = getSharedPreferences("my_app_session", Context.MODE_PRIVATE)
-                val userEmail = sharedPref.getString("user_email", null).toString()
-
                 // Now, you have the updated skillArray
                 // Pass the volunteer's skills to the dropdownFunction
-                DialogUtils.getDetails(userEmail) { volunteer ->
+                DialogUtils.getDetails(email!!) { volunteer ->
                     if (volunteer != null) {
                         // Volunteer found, do something with the details
                         // ...
@@ -220,7 +202,7 @@ class ProfileActivity : AppCompatActivity() {
                         dropdownFunction(volunteer.skills.toString())
                     } else {
                         // Volunteer not found
-                        DialogUtils.errorDialog(this@ProfileActivity, "Databaser Error...")
+                        DialogUtils.errorDialog(this@AdminVolunteerEditActivity, "Databaser Error...")
                     }
                 }
             }
@@ -246,5 +228,4 @@ class ProfileActivity : AppCompatActivity() {
         // Match the password against the regex
         return password.matches(passwordRegex.toRegex())
     }
-
 }

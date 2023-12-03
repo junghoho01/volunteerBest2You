@@ -1,15 +1,12 @@
 package com.example.best2help
 
-import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Point
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.example.best2help.databinding.ActivityAdminReportBinding
 import com.github.mikephil.charting.components.XAxis
@@ -21,23 +18,18 @@ import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.FirebaseDatabase.getInstance
 import com.google.firebase.database.ValueEventListener
 import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.layout.Document
-import com.itextpdf.layout.element.Image
-import com.itextpdf.layout.element.Paragraph
+import com.itextpdf.layout.element.*
 import com.itextpdf.layout.properties.TextAlignment
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.security.Policy.getInstance
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.Calendar.getInstance
-import java.util.Currency.getInstance
 
 class AdminReportActivity : AppCompatActivity() {
 
@@ -94,19 +86,14 @@ class AdminReportActivity : AppCompatActivity() {
         })
     }
 
-    // Update the data to chart
     private fun updateBarChart(eventDetailsList: List<EventDetails>) {
-        // Example data for the chart
         val entries = eventDetailsList.mapIndexed { index, eventDetails ->
             BarEntry(index.toFloat(), eventDetails.volunteerCount.toFloat())
         }
 
         val dataSet = BarDataSet(entries, "Volunteer Counts")
-
-        // Customize colors for each bar
         dataSet.colors = getColors(eventDetailsList.size)
 
-        // Set labels for the x-axis (event names)
         val labels = eventDetailsList.map { it.eventName }
         val xAxis = binding.barChart.xAxis
         xAxis.valueFormatter = IndexAxisValueFormatter(labels)
@@ -116,237 +103,117 @@ class AdminReportActivity : AppCompatActivity() {
         xAxis.granularity = 1f
 
         val data = BarData(dataSet)
+        data.barWidth = 0.6f // Adjust bar width for better separation
 
         val barChart = binding.barChart
         barChart.data = data
-        barChart.invalidate() // Refresh the chart
+        barChart.invalidate()
+
+        // Customize chart appearance
+        barChart.description.isEnabled = false // Disable description
+        barChart.legend.isEnabled = false // Disable legend
+        barChart.axisRight.isEnabled = false // Disable right axis
+
+        // Customize X-axis appearance
+        xAxis.textSize = 6f
+        xAxis.labelRotationAngle = -45f // Rotate labels for better readability
+        xAxis.position = XAxis.XAxisPosition.BOTTOM_INSIDE
+        xAxis.setDrawAxisLine(true)
+        xAxis.setDrawGridLines(false)
+        xAxis.granularity = 1f
+
+        // Customize Y-axis appearance
+        val yAxis = barChart.axisLeft
+        yAxis.textSize = 12f
     }
 
     private fun getColors(size: Int): List<Int> {
-        val colors = mutableListOf<Int>()
-        val colorTemplate = ColorTemplate.MATERIAL_COLORS
-
-        for (i in 0 until size) {
-            colors.add(colorTemplate[i % colorTemplate.size])
-        }
-
-        return colors
+        // Using a predefined color template
+        return ColorTemplate.MATERIAL_COLORS.toList().take(size)
     }
 
     private fun showToast(s: String) {
         Toast.makeText(this, s, Toast.LENGTH_LONG).show()
     }
 
-//    private fun exportChartToPdfAndShare() {
-//
-//        try {
-//
-//            // Get the external files directory
-//            val externalFilesDir = getExternalFilesDir(null)
-//
-//            // Create a file in the external files directory
-//            val pdfFile = File(externalFilesDir, "chart_report.pdf")
-//
-//            // Initialize PdfWriter and PdfDocument
-//            val writer = PdfWriter(pdfFile)
-//            val pdf = PdfDocument(writer)
-//            val document = Document(pdf)
-//
-//            // Convert the BarChart to a bitmap image
-//            val chartBitmap = binding.barChart.getChartBitmap()
-//
-//            // Convert the bitmap to a byte array
-//            val stream = ByteArrayOutputStream()
-//            chartBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-//            val byteArray = stream.toByteArray()
-//
-//            // Create an ImageData instance from the byte array
-//            val imageData = ImageDataFactory.create(byteArray)
-//
-//            // Create an Image instance from the ImageData
-//            val chartImage = Image(imageData)
-//
-//            // Add the chart image to the PDF document
-//            document.add(chartImage)
-//
-//            // Close the document
-//            document.close()
-//
-//            // Share the PDF file using ACTION_SEND
-//            val shareIntent = Intent(Intent.ACTION_SEND)
-//            shareIntent.type = "application/pdf"
-//            val uri = FileProvider.getUriForFile(
-//                this,
-//                "com.example.best2help.fileprovider",
-//                pdfFile
-//            )
-//            shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
-//            startActivity(Intent.createChooser(shareIntent, "Share PDF"))
-//
-//            Log.d("PDF_EXPORT", "PDF file path: ${pdfFile.absolutePath}")
-//
-//
-//        } catch (e: Exception) {
-//            // Log additional information for debugging
-//            Log.e("PDF_EXPORT", "Error exporting PDF: ${e.message}")
-//            e.printStackTrace()
-//
-//            // Display a toast message with a generic error
-//            showToast("Error exporting PDF. Check logs for details.")
-//        }
-//
-//    }
-
-//    private fun exportChartToPdfAndShare() {
-//        try {
-//
-//            // Get the external files directory
-//            val externalFilesDir = getExternalFilesDir(null)
-//
-//            // Create a file in the external files directory
-//            val pdfFile = File(externalFilesDir, "chart_report.pdf")
-//
-//            // Initialize PdfWriter and PdfDocument
-//            val writer = PdfWriter(pdfFile)
-//            val pdf = PdfDocument(writer)
-//            val document = Document(pdf)
-//
-//            // Add a title to the document
-//            val title = Paragraph("Volunteer Counts Report")
-//                .setTextAlignment(TextAlignment.CENTER)
-//                .setFontSize(18f)
-//            document.add(title)
-//
-//            // Add a subtitle with the current date
-//            val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-//            val subtitle = Paragraph("Report generated on: $currentDate")
-//                .setTextAlignment(TextAlignment.CENTER)
-//                .setFontSize(14f)
-//                .setMarginBottom(20f)
-//            document.add(subtitle)
-//
-//            // Convert the BarChart to a bitmap image
-//            val chartBitmap = binding.barChart.getChartBitmap()
-//
-//            // Convert the bitmap to a byte array
-//            val stream = ByteArrayOutputStream()
-//            chartBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-//            val byteArray = stream.toByteArray()
-//
-//            // Create an ImageData instance from the byte array
-//            val imageData = ImageDataFactory.create(byteArray)
-//
-//            // Create an Image instance from the ImageData
-//            val chartImage = Image(imageData)
-//
-//            // Add the chart image to the PDF document
-//            document.add(chartImage)
-//
-//            // Close the document
-//            document.close()
-//
-//            // Share the PDF file using ACTION_SEND
-//            val shareIntent = Intent(Intent.ACTION_SEND)
-//            shareIntent.type = "application/pdf"
-//            val uri = FileProvider.getUriForFile(
-//                this,
-//                "com.example.best2help.fileprovider",
-//                pdfFile
-//            )
-//            shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
-//            startActivity(Intent.createChooser(shareIntent, "Share PDF"))
-//
-//        } catch (e: Exception) {
-//            // Log additional information for debugging
-//            Log.e("PDF_EXPORT", "Error exporting PDF: ${e.message}")
-//            e.printStackTrace()
-//
-//            // Display a toast message with a generic error
-//            showToast("Error exporting PDF. Check logs for details.")
-//        }
-//    }
-
     private fun exportChartToPdfAndShare() {
         try {
-
-            // Get the external files directory
             val externalFilesDir = getExternalFilesDir(null)
-
-            // Create a file in the external files directory
             val pdfFile = File(externalFilesDir, "chart_report.pdf")
 
-            // Initialize PdfWriter and PdfDocument
-            val writer = PdfWriter(pdfFile)
-            val pdf = PdfDocument(writer)
-            val document = Document(pdf)
+            pdfFile.outputStream().use { outputStream ->
+                val writer = PdfWriter(outputStream)
+                val pdf = PdfDocument(writer)
+                val document = Document(pdf)
 
-            // Add a title to the document
-            val title = Paragraph("Volunteer Counts Report")
-                .setTextAlignment(TextAlignment.CENTER)
-                .setFontSize(18f)
-            document.add(title)
+                // Add a title to the document
+                val title = Paragraph("Volunteer Counts Report")
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setFontSize(30f)
+                    .setMarginTop(300f)
+                document.add(title)
 
-            // Add a subtitle with the current date
-            val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-            val subtitle = Paragraph("Report generated on: $currentDate")
-                .setTextAlignment(TextAlignment.CENTER)
-                .setFontSize(14f)
-                .setMarginBottom(20f)
-            document.add(subtitle)
+                // Add a subtitle with the current date
+                val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+                val subtitle = Paragraph("Report generated on: $currentDate")
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setFontSize(20f)
+                    .setMarginBottom(20f)
+                document.add(subtitle)
 
-            // Convert the BarChart to a bitmap image
-            val chartBitmap = binding.barChart.getChartBitmap()
+                val chartBitmap = binding.barChart.getChartBitmap()
+                val stream = ByteArrayOutputStream()
+                chartBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                val byteArray = stream.toByteArray()
 
-            // Convert the bitmap to a byte array
-            val stream = ByteArrayOutputStream()
-            chartBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-            val byteArray = stream.toByteArray()
+                val imageData = ImageDataFactory.create(byteArray)
+                val chartImage = Image(imageData)
 
-            // Create an ImageData instance from the byte array
-            val imageData = ImageDataFactory.create(byteArray)
+                val pageSize = PageSize.A5
+                val scaleFactor = pageSize.width / chartImage.imageScaledWidth
+                chartImage.scaleToFit(pageSize.width, chartImage.imageScaledHeight * scaleFactor)
+                chartImage.setMargins(0f, 0f, 50f, 0f)
 
-            // Create an Image instance from the ImageData
-            val chartImage = Image(imageData)
+                document.add(chartImage)
 
-            // Adjust chart image size to fit the page
-            val pageSize = PageSize.A5
-            val scaleFactor = pageSize.width / chartImage.imageScaledWidth
-            chartImage.scaleToFit(pageSize.width, chartImage.imageScaledHeight * scaleFactor)
+                val xAxisLabels =
+                    (binding.barChart.xAxis.valueFormatter as? IndexAxisValueFormatter)?.let { formatter ->
+                        (0 until formatter.values.size).map { formatter.getFormattedValue(it.toFloat()) }
+                    } ?: emptyList<String>()
 
-            // Add the chart image to the PDF document
-            document.add(chartImage)
+                val xLabelsTitle = Paragraph("X-Axis Labels in Sequence:")
+                    .setFontSize(15f)
+                    .setMarginBottom(10f)
 
-            // Add X-axis labels under the chart
-            val xAxisLabels = (binding.barChart.xAxis.valueFormatter as? IndexAxisValueFormatter)?.let { formatter ->
-                (0 until formatter.values.size).map { formatter.getFormattedValue(it.toFloat()) }
-            } ?: emptyList<String>()
+                val xLabelsTable = Table(1).apply {
+                    setFontSize(15f)
+                    setMarginBottom(10f)
 
-            val xLabelsParagraph = Paragraph("Event Labels: ${xAxisLabels.joinToString(", ")}")
-                .setTextAlignment(TextAlignment.LEFT)
-                .setFontSize(12f)
-                .setMarginBottom(10f)
-            document.add(xLabelsParagraph)
+                    // Populate the table with numbered labels
+                    xAxisLabels.forEachIndexed { index, label ->
+                        addCell(Cell().add(Paragraph("${index + 1}. $label")))
+                    }
+                }
 
-            // Close the document
-            document.close()
+                document.add(xLabelsTitle)
+                document.add(xLabelsTable)
 
-            // Share the PDF file using ACTION_SEND
-            val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.type = "application/pdf"
-            val uri = FileProvider.getUriForFile(
-                this,
-                "com.example.best2help.fileprovider",
-                pdfFile
-            )
-            shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
-            startActivity(Intent.createChooser(shareIntent, "Share PDF"))
 
+                document.close()
+
+                val shareIntent = Intent(Intent.ACTION_SEND)
+                shareIntent.type = "application/pdf"
+                val uri = FileProvider.getUriForFile(
+                    this,
+                    "com.example.best2help.fileprovider",
+                    pdfFile
+                )
+                shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
+                startActivity(Intent.createChooser(shareIntent, "Share PDF"))
+            }
         } catch (e: Exception) {
-            // Log additional information for debugging
             Log.e("PDF_EXPORT", "Error exporting PDF: ${e.message}")
             e.printStackTrace()
-
-            // Display a toast message with a generic error
             showToast("Error exporting PDF. Check logs for details.")
         }
     }

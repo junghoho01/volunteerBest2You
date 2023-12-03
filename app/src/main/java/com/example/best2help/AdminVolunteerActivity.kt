@@ -57,11 +57,13 @@ class AdminVolunteerActivity : AppCompatActivity() {
                     volunteerRecyclerView.adapter = adapter
                     adapter.setOnItemClickListener(object : VolunteerListAdapter.onItemClickListener{
                         override fun onItemClick(position: Int) {
-                            var username = volunteerArrayList[position].username
-                            DialogUtils.succsessDialog(this@AdminVolunteerActivity, username.toString())
-//                            var intent = Intent(this@EventListingActivity, EventDetailsActivity::class.java)
-//                            intent.putExtra("EVENTID_KEY", id)
-//                            startActivity(intent)
+                            var uid = volunteerArrayList[position].uid
+                            var email = volunteerArrayList[position].email
+//                            DialogUtils.succsessDialog(this@AdminVolunteerActivity, username.toString())
+                            var intent = Intent(this@AdminVolunteerActivity, AdminVolunteerEditActivity::class.java)
+                            intent.putExtra("VOLUNTEER_EMAIL", email)
+                            intent.putExtra("VOLUNTEER_UID", uid)
+                            startActivity(intent)
                         }
                     })
                 }
